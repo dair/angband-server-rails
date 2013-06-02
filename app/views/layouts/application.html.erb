@@ -1,14 +1,29 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-  <title>Angband</title>
+  <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+  <META HTTP-EQUIV="EXPIRES" CONTENT="0">
+  <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+  <title><%= @title %></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-<%= yield %>
+    <table width="100%" border="0" style="margin: 0;">
+        <tbody>
+            <tr>
+                <td>
+                    <%= render "header" %>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <%= yield %>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
 </body>
 </html>

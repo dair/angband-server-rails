@@ -1,0 +1,22 @@
+<table width="100%">
+    <tbody>
+        <tr>
+            <td>
+                <img src="/assets/site_name.png">
+            </td>
+            <td valign="center" align="right">
+                <%= form_tag(:controller => "application", :action => "logout") do %>
+                    <%= @username %>&nbsp;<input type="submit" value="Выйти" name="Logout" />
+                <% end %>
+            </td>
+        </tr>
+<% if @last_error %>
+        <tr>
+            <td colspan="2" rowspan="1">
+                <font size="+1" color="red"><%= @last_error %>
+            </td>
+        </tr>
+<% @last_error = nil %>
+<% end %>
+    </tbody>
+</table>

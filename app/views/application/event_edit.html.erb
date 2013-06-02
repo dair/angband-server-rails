@@ -1,0 +1,39 @@
+<% if @event["id"] == 0 %>
+    <%= link_to 'Вернуться к главной странице', :action => "main" %>
+<% else %>
+    <%= link_to 'Вернуться к информации о событии', :action => "event", :key => @event["id"] %>
+<% end %>
+<br>
+<table width="100%">
+<%= form_tag(:action => "event_write") do %>
+<%= hidden_field_tag 'id', @event["id"] %>
+
+    <tbody>
+        <tr>
+            <td align="right">Заголовок:</td>
+            <td align="left"><%= text_field_tag("title", @event["title"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr>
+            <td align="right">Объекты:</td>
+            <td align="left"><%= text_field_tag("objects", @event["objects"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr>
+            <td align="right">Локация:</td>
+            <td align="left"><%= text_field_tag("location", @event["location"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr valign="top">
+            <td align="right">Текст:</td>
+            <td>
+            <%= text_area_tag("description", @event["description"], :size => "114x10") %></td>
+        </tr>
+        <tr>
+            <td align="right">Источник:</td>
+            <td align="left"><%= text_field_tag("reporter", @event["reporter"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><%= submit_tag("Сохранить") %></td>
+        </tr>
+    </tbody>
+<% end %>
+</table>

@@ -50,6 +50,18 @@ Angband::Application.routes.draw do
   # just remember to delete public/index.html.
   # root :to => 'welcome#index'
 
+  root :to => "application#index"
+
+  post "application/login"
+  post "application/logout"
+  get "application/main"
+  get "application/events"
+  get "application/event"
+  get "application/event_edit"
+  post "application/event_write"
+
+  get "application/map"
+
   # See how all your routes lay out with "rake routes"
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.

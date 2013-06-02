@@ -1,0 +1,31 @@
+<html>
+<head>
+</head>
+<body>
+<div style='position:absolute;z-index:0;left:0;top:0;width:100%;height:100%'>
+  <img src="/assets/map.png" style='height:100%;'/>
+</div>
+
+<div align="right">Result:<div id="result"></div></div>
+</body>
+<Script type='text/javascript'>
+    var elem = document.getElementById('result');
+    var startPosX = 0, startPosY = 0, endPosX = 0, endPosY = 0;
+    function startPos(e) {
+       var eve = (e) ? e : window.event;
+       var x = (eve.layerX) ? eve.layerX : eve.offsetX;
+       var y = (eve.layerX) ? eve.layerY : eve.offsetY;
+       startPosX = x, startPosY = y;
+    }
+    function endPos(e) {
+       var eve = (e) ? e : window.event;
+       var x = (eve.layerX) ? eve.layerX : eve.offsetX;
+       var y = (eve.layerX) ? eve.layerY : eve.offsetY;
+       endPosX = x, endPosY = y;
+       elem.innerHTML = 'startPos(X)= ' + startPosX + ' | startPos(Y)= ' + startPosY + '<br/> endPos(X)= ' + endPosX + ' | endPos(Y)= ' + endPosY;
+    }
+
+    document.onmousedown = startPos;
+    document.onmouseup = endPos;
+</Script>
+</html>

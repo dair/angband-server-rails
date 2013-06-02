@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <link rel="stylesheet" href="login.css">
+    <title>Angband | Login</title>
+  </head>
+  <body onload="document.getElementById('name').focus()">
+    <div style="position: absolute; top: 33%; left: 0px; width: 100%; height: 0px; margin: 0;">
+      <div style="position: relative; top: -107px; left: 0px">
+        <%= form_tag(:action => "login") do %>
+          <table style="margin-left: auto; margin-right: auto; text-align: left; " cellpadding="2" cellspacing="2">
+            <tbody>
+              <tr>
+                <td colspan="1" rowspan="2" style="vertical-align: middle; height: 213px; width: 124px; text-align: center;">
+                  <img style="width: 124px; height: 213px;" alt="Gollum" src="gollum.png">
+                </td>
+              </tr>
+              <tr>
+                <td style="vertical-align: middle; text-align: left; height: 100%;" rowspan="1" colspan="2">
+                  <table style="text-align: left; width: 100%;" border="0" cellpadding="2" cellspacing="2">
+                    <tbody>
+                      <tr>
+                        <td style="vertical-align: middle; text-align: right;">Имя:</td>
+                        <td style="vertical-align: middle;">
+                          <input tabindex="10" name="name" id="name">
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="vertical-align: middle; text-align: right;">Пароль:</td>
+                        <td style="vertical-align: middle;">
+                          <input tabindex="20" name="password" type="password" id="password">
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" rowspan="1" style="vertical-align: top; text-align: center;">
+                          <input tabindex="30" value="Вход" name="submit" type="submit">
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        <% end %>
+      </div> 
+    </div>
+  </body>
+</html>
