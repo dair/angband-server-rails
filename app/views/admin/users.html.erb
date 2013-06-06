@@ -1,0 +1,27 @@
+<%= link_to "Новый пользователь", { :action => "user_edit" }, :class => "linkbutton" %><br>
+<br><br><br>
+<table border="1">
+    <tbody>
+        <!-- заголовочек -->
+        <th>Login</th>
+        <th>Имя</th>
+        <% @roles.each do |id, name| %>
+            <th><%= name %>&nbsp;(<%= id %>)</th>
+        <% end %>
+
+<% for user in @users %>
+    <tr>
+        <td><%= link_to user["id"], :action => "user_edit", :id => user["id"] %></td>
+        <td><%= user["name"] %></td>
+        <% @roles.each do |id, name| %>
+            <td align="center">
+                <% if user["roles"].include? id %>
+                X
+                <% end %>
+            </td>
+        <% end %>
+    </tr>
+<% end %>
+    </tbody>
+</table>
+

@@ -1,0 +1,41 @@
+<%= form_tag(:action => "user_write") do %>
+<%= hidden_field_tag 'old_id', @user["id"] %>
+
+<table>
+    <tbody>
+        <tr>
+            <td align="right">id</td>
+            <td><%= text_field_tag("id", @user["id"], :size => "100%", :maxlength => 255) %></td>
+        </tr>
+        <tr>
+            <td align="right">Имя</td>
+            <td><%= text_field_tag("name", @user["name"], :size => "100%", :maxlength => 255) %></td>
+        </tr>
+        <tr>
+            <td align="right">Пароль</td>
+            <td><%= text_field_tag("pw1", "", :size => "100%", :maxlength => 255) %></td>
+        </tr>
+        <tr>
+            <td align="right">Еще пароль</td>
+            <td><%= text_field_tag("pw2", "", :size => "100%", :maxlength => 255) %></td>
+        </tr>
+        <% @roles.each do |id, name| %>
+            <tr>
+                <td align="right">
+                    <%= name %>
+                </td>
+                <td align="left">
+                    <%= check_box_tag("role_" + id, 'yes', (@user["roles"] and @user["roles"].include?(id))) %>
+                </td>
+            </tr>
+        <% end %>
+        <tr>
+            <td></td>
+            <td>
+                <%= submit_tag("Сохранить") %>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<% end %>
