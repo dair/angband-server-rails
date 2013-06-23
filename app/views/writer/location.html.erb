@@ -1,0 +1,31 @@
+<%= render "subheader" %>
+<h2>Локация</h2>
+<table width="100%">
+<%= form_tag(:action => "location_write") do %>
+<%= hidden_field_tag 'id', @location["id"] %>
+    <tbody>
+        <% if @location["id"] and @location["id"].to_i > 0 %>
+            <tr>
+                <td align="right">Событий в локации:</td>
+                <td align="left"><%= @location["events"] %></td>
+            </tr>
+        <% end %>
+        <tr>
+            <td align="right">Название:</td>
+            <td align="left"><%= text_field_tag("name", @location["name"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><%= submit_tag("Сохранить") %></td>
+        </tr>
+    </tbody>
+<% end %>
+</table>
+<% if @location["id"] and @location["id"].to_i > 0 %>
+    <% if @location["events"] and @location["events"].to_i == 0 %>
+        <%= link_to "Удалить локацию", { :action => "location_delete", :id => @location["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить локацию \"" + @location["name"] + "\"?');") %>
+    <% else %>
+        Локацию нельзя удалить, потому как к ней привязаны события
+    <% end %>
+<% end %>
+

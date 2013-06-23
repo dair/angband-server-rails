@@ -1,0 +1,48 @@
+<%= render "subheader" %>
+
+<%= form_tag({:action => "events"}, :method => :get) do %>
+    Показать объекты с №<%= text_field_tag("from", @params["from"], :maxlength => 10) %>
+    общим количеством <%= text_field_tag("qty", @params["qty"], :maxlength => 10) %>
+    <%= submit_tag("Сохранить") %>
+<% end %>
+
+<br>
+<table border=1>
+    <tbody>
+        <tr>
+            <th>Название</th>
+            <th>Описание (не&nbsp;полностью)</th>
+            <th>Создатель объекта</th>
+            <th>Дата создания объекта</th>
+            <th>Последний редактировавший</th>
+            <th>Дата последнего редактирования</th>
+        </tr>
+        <% for row in @params["objects"] %>
+            <tr>
+                <td>
+                    <% if session[:userroles].include? "W" %>
+                        <% ctrl = "writer" %>
+                    <% else %>
+                        <% ctrl = "reader" %>
+                    <% end %>
+                    <%= link_to row["name"], { :action => "object", :controller => ctrl, :id => row["id"] } %>
+                </td>
+                <td><%= row["description"] %></td>
+                <td><%= row["cr_name"] %></td>
+                <td><%= row["cr_date"] %></td>
+                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
+                        <font color=<%= color %>>
+                        <%= row["up_name"] %>
+                        </font>
+                </td>
+                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
+                    <font color=<%= color %>>
+                        <%= row["up_date"] %>
+                    </font>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>
+
+

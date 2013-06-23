@@ -1,3 +1,5 @@
+<%= render "subheader" %>
+<h2>Новое событие</h2>
 <table width="100%">
 <%= form_tag(:action => "event_write") do %>
 <%= hidden_field_tag 'id', @event["id"] %>
@@ -87,16 +89,21 @@
     </tbody>
 <% end %>
 </table>
+<% if @event["id"] and @event["id"].to_i > 0 %>
+    <%= link_to "Удалить событие", { :action => "event_delete", :id => @event["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить событие \"" + @event["title"] + "\"?');") %>
+<% end %>
 <script type='text/javascript'>
-    var obj_suggests = [<%= raw @all_objects.collect{|x| '"' + x + '"'}.join(", ")  %>];
-    $("#objects").asuggest(obj_suggests);
+    $(document).ready(function() {
+        var obj_suggests = [<%= raw @all_objects.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#objects").asuggest(obj_suggests);
 
-    var loc_suggests = [<%= raw @all_locations.collect{|x| '"' + x + '"'}.join(", ")  %>];
-    $("#location").asuggest(loc_suggests);
+        var loc_suggests = [<%= raw @all_locations.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#location").asuggest(loc_suggests);
 
-    var rep_suggests = [<%= raw @all_reporters.collect{|x| '"' + x + '"'}.join(", ")  %>];
-    $("#reporter").asuggest(rep_suggests);
+        var rep_suggests = [<%= raw @all_reporters.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#reporter").asuggest(rep_suggests);
 
-    var tag_suggests = [<%= raw @all_tags.collect{|x| '"' + x + '"'}.join(", ")  %>];
-    $("#reporter").asuggest(tag_suggests);
+        var tag_suggests = [<%= raw @all_tags.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#reporter").asuggest(tag_suggests);
+    });
 </script>

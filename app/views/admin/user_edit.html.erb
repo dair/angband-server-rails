@@ -13,11 +13,11 @@
         </tr>
         <tr>
             <td align="right">Пароль</td>
-            <td><%= text_field_tag("pw1", "", :size => "100%", :maxlength => 255) %></td>
+            <td><%= password_field_tag("pw1", "", :size => "100%", :maxlength => 255) %></td>
         </tr>
         <tr>
             <td align="right">Еще пароль</td>
-            <td><%= text_field_tag("pw2", "", :size => "100%", :maxlength => 255) %></td>
+            <td><%= password_field_tag("pw2", "", :size => "100%", :maxlength => 255) %></td>
         </tr>
         <% @roles.each do |id, name| %>
             <tr>

@@ -1,9 +1,3 @@
-<% if @event["id"] == 0 %>
-    <%= link_to 'Вернуться к главной странице', :action => "main" %>
-<% else %>
-    <%= link_to 'Вернуться к информации о событии', :action => "event", :key => @event["id"] %>
-<% end %>
-<br>
 <table width="100%">
 <%= form_tag(:action => "event_write") do %>
 <%= hidden_field_tag 'id', @event["id"] %>

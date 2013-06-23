@@ -4,6 +4,9 @@
             <td>
                 <img src="/assets/site_name.png">
             </td>
+            <td align="center" border="1">
+<h3><%= @subtitle %></h3>
+            </td>
             <td valign="center" align="right">
                 <%= form_tag(:controller => "application", :action => "logout") do %>
                     <%= @username %>&nbsp;<input type="submit" value="Выйти" name="Logout" />
@@ -13,7 +16,17 @@
 <% if @last_error %>
         <tr>
             <td colspan="2" rowspan="1">
-                <font size="+1" color="red"><%= @last_error %>
+                <font size="+1" color="red">
+                    <ul>
+                    <% if @last_error.kind_of? Array %>
+                        <% for e in @last_error %>
+                            <li><%= e %></li>
+                        <% end %>
+                    <% else %>
+                        <li><%= @last_error %></li>
+                    <% end %>
+                    </ul>
+                </font>
             </td>
         </tr>
 <% @last_error = nil %>

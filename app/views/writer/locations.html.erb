@@ -1,0 +1,23 @@
+<%= render "subheader" %>
+
+<h2>Список локаций</h2>
+
+<table border=1>
+    <tbody>
+        <tr>
+            <th>Название</th>
+        </tr>
+        <% for row in @params["locations"] %>
+            <tr>
+                <td>
+                    <% if session[:userroles].include? "W" %>
+                        <% ctrl = "writer" %>
+                    <% else %>
+                        <% ctrl = "reader" %>
+                    <% end %>
+                    <%= link_to row["name"], { :action => "location", :controller => ctrl, :id => row["id"] } %>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>

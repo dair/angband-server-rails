@@ -26,6 +26,9 @@ class WriterController < ApplicationController
             @event = session["event_edit"]
             session["event_edit_prev"] = session["event_edit"]["old"]
             session["event_edit"] = nil
+        elsif params["id"]
+            id = id0(params["id"])
+            @event = AngbandDb.getEvent(id, session["timezone"])
         else
             @event = Hash.new
         end
@@ -33,6 +36,8 @@ class WriterController < ApplicationController
         @all_locations = AngbandDb.getAllLocationNames()
         @all_reporters = AngbandDb.getAllReporterNames()
         @all_tags = AngbandDb.getAllTagNames()
+
+        render "main"
     end
 
     def event_params(params)
@@ -165,5 +170,205 @@ class WriterController < ApplicationController
         end
         return true
     end
+
+    def events
+        if not checkCredentials
+            return
+        end
+
+        @params = params
+        if not params
+            @params = Hash.new
+        end
+        if not @params["from"]
+            @params["from"] = 0
+        end
+        if not @params["qty"]
+            @params["qty"] = 100
+        end
+        
+        events = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone])
+
+        @params["events"] = events
+    end
+
+    def event
+        main
+    end
+
+    def event_delete
+        if not checkCredentials
+            return
+        end
+
+        id = id0(params["id"])
+        if id > 0
+            AngbandDb.deleteEvent(id)
+        end
+        redirect_to :action => "events"
+    end
+
+################### OBJECT
+
+    def objects
+        if not checkCredentials
+            return
+        end
+
+        if not params
+            @params = Hash.new
+        else
+            @params = params
+        end
+        if not @params["from"]
+            @params["from"] = 0
+        end
+        if not @params["qty"]
+            @params["qty"] = 100
+        end
+       
+        objects = AngbandDb.getObjectList(id0(@params["from"]), id0(@params["qty"]), session[:timezone])
+        for obj in objects
+            if obj["description"] and obj["description"].length > 50
+                obj["description"] = obj["description"][0, 50] + "..."
+            end
+        end
+
+        @params["objects"] = objects
+    end
+
+    def object
+        if not checkCredentials
+            return
+        end
+
+        id = id0(params["id"])
+        if session["object"]
+            object = session["object"]
+            session["object"] = nil
+        elsif id > 0
+            object = AngbandDb.getObject(id, session["timezone"])
+        else
+            object = Hash.new
+            object["id"] = 0
+        end
+
+        @object = object
+    end
+
+    def object_write
+        if not checkCredentials
+            return
+        end
+
+        id = id0(params["id"])
+
+        params["name"] = params["name"].strip
+        params["description"] = params["description"].strip
+
+        if params["name"].empty?
+            addError("Имя пустым быть не должно")
+            session["object"] = params
+            redirect_to :action => "object"
+            return
+        end
+
+        found_id = id0(AngbandDb.findObjectByName(params["name"]))
+        if found_id > 0 and id != found_id
+            addError("Объект с таким именем уже есть")
+            session["object"] = params
+            redirect_to :action => "object"
+            return
+        end
+
+        params["id"] = id
+        AngbandDb.writeObject(params, session[:user_id])
+        redirect_to :action => "objects"
+    end
+
+    def object_delete
+        if not checkCredentials
+            return
+        end
+
+        id = id0(params["id"])
+
+        AngbandDb.deleteObject(id)
+
+        redirect_to :action => "objects"
+    end
+
+    def locations
+        if not checkCredentials
+            return
+        end
+
+        locations = AngbandDb.getLocationList()
+        @params = Hash.new
+        @params["locations"] = locations
+    end
+
+    def location
+        if not checkCredentials
+            return
+        end
+
+        id = id0(params["id"])
+        if session["location"]
+            location = session["location"]
+            session["location"] = nil
+        elsif id > 0
+            location = AngbandDb.getLocation(id)
+            evts = AngbandDb.getEventsByLocation(id)
+            location["events"] = evts.length
+        else
+            location = Hash.new
+            location["id"] = 0
+        end
+
+        @location = location
+    end
+
+    def location_write
+        if not checkCredentials
+            return
+        end
+
+        id = id0(params["id"])
+
+        params["name"] = params["name"].strip
+
+        if params["name"].empty?
+            addError("Имя пустым быть не должно")
+            session["location"] = params
+            redirect_to :action => "location"
+            return
+        end
+
+        found_id = id0(AngbandDb.findLocationByName(params["name"]))
+        if found_id > 0 and id != found_id
+            addError("Локация с таким именем уже есть")
+            session["location"] = params
+            redirect_to :action => "location"
+            return
+        end
+
+        params["id"] = id
+        AngbandDb.writeLocation(params, session[:user_id])
+        redirect_to :action => "locations"
+    end
+
+    def location_delete
+        if not checkCredentials
+            return
+        end
+
+        id = id0(params["id"])
+        if id > 0
+            AngbandDb.deleteLocation(id)
+        end
+        redirect_to :action => "locations"
+    end
+
 end
 

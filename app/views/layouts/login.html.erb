@@ -4,12 +4,22 @@
     <meta content="text/html; charset=UTF-8" http-equiv="content-type">
     <link rel="stylesheet" href="login.css">
     <title>Angband | Login</title>
+    <script>
+        function onLoginLoad()
+        {
+            var current_time = new Date();
+            document.getElementById('timezone').value = current_time.getTimezoneOffset();
+            document.getElementById('name').focus();
+        }
+
+    </script>
   </head>
-  <body onload="document.getElementById('name').focus()">
+  <body onload="onLoginLoad()">
     <div style="position: absolute; top: 33%; left: 0px; width: 100%; height: 0px; margin: 0;">
       <div style="position: relative; top: -107px; left: 0px">
         <%= form_tag(:action => "login") do %>
-          <table style="margin-left: auto; margin-right: auto; text-align: left; " cellpadding="2" cellspacing="2">
+          <input type="hidden" id="timezone" name="timezone">
+          <table style="margin-left: auto; margin-right: auto; text-align: left;" cellpadding="2" cellspacing="2">
             <tbody>
               <tr>
                 <td colspan="1" rowspan="2" style="vertical-align: middle; height: 213px; width: 124px; text-align: center;">
@@ -43,6 +53,9 @@
               </tr>
             </tbody>
           </table>
+        <% end %>
+        <% if @last_error %>
+            <div style="text-align: center;"><font size="+1" color="red"><%= @last_error.join("<br>") %></font></div>
         <% end %>
       </div> 
     </div>

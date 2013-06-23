@@ -1,9 +1,13 @@
+# coding: UTF-8
+
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
   def setDefaultVars
     if (flash[:last_error])
-      @last_error = flash[:last_error].join(", ")
+      @last_error = flash[:last_error]
+    else
+      @last_error = nil
     end
     @username = session[:username]
   end
@@ -27,7 +31,7 @@ class ApplicationController < ActionController::Base
 
   def addError(error)
     if !flash[:last_error]
-      flash[:last_error] = []
+      flash[:last_error] = Array.new
     end
     flash[:last_error].append(error)
   end
@@ -47,24 +51,46 @@ class ApplicationController < ActionController::Base
       passwd = params[:password]
 
       ret = AngbandDb.checkLogin(id, passwd)
+      roles = []
+      if ret
+        roles = AngbandDb.getOperatorRoles(id)
+      end
     else
       id = session[:user_id]
       name = session[:username]
+      roles = session[:userroles]
       ret = true
     end
 
-    if (ret)
-      session[:user_id] = id
-      session[:username] = AngbandDb.getOperatorName(id)
-      redirect_to :action => "main"
-    else
+    if !ret
+      addError("Имя/пароль неправильные")
       redirect_to :action => "index"
+      return
     end
+
+    if not roles or roles.empty?
+      addError("Роли для пользователя не заданы. Обратитесь к администратору")
+      redirect_to :action => "index"
+      return
+    end
+
+    session[:user_id] = id
+    session[:username] = AngbandDb.getOperatorName(id)
+    session[:userroles] = roles
+
+    timezone = params["timezone"].to_i
+    hours = timezone / 60
+    minutes = timezone % 60
+    timezone = "%d:%02d" % [hours, minutes]
+    session[:timezone] = timezone
+
+    redirect_to :action => "main"
   end
 
   def logout
     session[:user_id] = nil
     session[:username] = nil
+    session[:userroles] = nil
     redirect_to :action => "index"
   end
 
@@ -76,68 +102,29 @@ class ApplicationController < ActionController::Base
     return true
   end
 
+  def splitString(s)
+    return s.split(/ +/)
+  end
+
   def main
-    if not checkCredentials()
-      return
+    if not checkCredentials
+        return
     end
-    render "index"
+    roles = session[:userroles]
+    if roles.size == 1
+        case roles[0]
+            when 'A'
+                redirect_to :controller => "admin", :action => "main"
+            when 'W' # writer
+                redirect_to :controller => "writer", :action => "main"
+            when 'R'
+                redirect_to :controller => "reader", :action => "main"
+        end
+        return
+    end
+
+    @roles = roles
   end
 
-  def events
-    if not checkCredentials()
-      return
-    end
-  end
-
-  def event
-    if not checkCredentials()
-      return
-    end
-    
-    id = id0(params[:id])
-    if (id == 0)
-        redirect_to :action => "event_edit", :id => params[:id]
-    end
-    @event = params[:id]
-  end
-
-  def event_edit
-    if not checkCredentials()
-      return
-    end
-    
-    id = id0(params[:id])
-    if (id == 0)
-      @event = Hash.new
-      @event["id"] = id
-    else
-      @event = AngbandDb.getEvent(id)
-    end
-  end
-
-  def event_write
-    if not checkCredentials()
-      return
-    end
-
-#    puts "WEEEEEEE"
-#    puts params
-#    puts "WEEEEEEE"
-
-    event = Hash.new
-    event["title"] = params["title"].strip
-    event["objects_str"] = params[:objects].strip
-    event["location_str"] = params[:location].strip
-    event["desc"] = params[:description]
-    event["id"] = id0(params[:id])
-
-    AngbandDb.writeEvent(event)
-    
-    redirect_to :action => "event", :id => params[:id]
-  end
-
-  def map
-    render "map", :layout => false
-  end
 end
 

@@ -1,0 +1,26 @@
+<%= render "subheader" %>
+<h2>Объект</h2>
+<table width="100%">
+<%= form_tag(:action => "object_write") do %>
+<%= hidden_field_tag 'id', @object["id"] %>
+    <tbody>
+        <tr>
+            <td align="right">Название:</td>
+            <td align="left"><%= text_field_tag("name", @object["name"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr valign="top">
+            <td align="right">Описание:</td>
+            <td>
+            <%= text_area_tag("description", @object["description"], :size => "114x10") %></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><%= submit_tag("Сохранить") %></td>
+        </tr>
+    </tbody>
+<% end %>
+</table>
+<% if @object["id"] and @object["id"].to_i > 0 %>
+    <%= link_to "Удалить объект", { :action => "object_delete", :id => @object["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить объект \"" + @object["name"] + "\"?');") %>
+<% end %>
+

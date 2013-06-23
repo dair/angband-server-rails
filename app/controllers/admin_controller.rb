@@ -44,7 +44,12 @@ class AdminController < ApplicationController
         if params[:id]
             @user = AngbandDb.getOperator(params[:id])
         else
-            @user = Hash.new
+            if session[:user_edit]
+                @user = session[:user_edit]
+                session[:user_edit] = nil
+            else
+                @user = Hash.new
+            end
         end
         puts @user
         @roles = AngbandDb.getAllRoles()
@@ -58,6 +63,13 @@ class AdminController < ApplicationController
 #        puts "================================================================================"
 #        puts params
 #        puts "================================================================================"
+
+        if params["pw1"] != params["pw2"]
+            session[:user_edit] = params
+            addError("Пароли не совпадают")
+            redirect_to :action => "user_edit"
+            return
+        end
 
         roles = AngbandDb.getAllRoles()
         user_roles = Array.new
