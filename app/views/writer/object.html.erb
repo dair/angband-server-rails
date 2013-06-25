@@ -1,8 +1,41 @@
+<script>
+	function leftToRight()
+	{
+		var left = document.getElementById("children");
+		var right = document.getElementById("not_children");
+		var idx = left.selectedIndex;
+		right.options[right.options.length] = new Option(left.options[idx].text, left.options[idx].value);
+		$("#children option:selected").remove();
+	}
+	
+	function rightToLeft()
+	{
+		var left = document.getElementById("children");
+		var right = document.getElementById("not_children");
+		var idx = right.selectedIndex;
+		left.options[left.options.length] = new Option(right.options[idx].text, right.options[idx].value);
+		$("#not_children option:selected").remove();
+	}
+
+	function onSubmit()
+	{
+		children = document.getElementById("children");
+		s = "";
+		for (var i = 0; i < children.options.length; i++)
+		{
+			s = s + " " + children.options[i].value;
+			alert(children.options[i].value);
+		}
+		document.getElementById("children_list").value = s;
+	}
+</script>
+
 <%= render "subheader" %>
 <h2>Объект</h2>
 <table width="100%">
-<%= form_tag(:action => "object_write") do %>
+<%= form_tag({:action => "object_write"}, {:onsubmit => "onSubmit();"}) do %>
 <%= hidden_field_tag 'id', @object["id"] %>
+<%= hidden_field_tag 'children_list', @object["children"].map {|c| c["id"] } %>
     <tbody>
         <tr>
             <td align="right">Название:</td>
@@ -13,6 +46,39 @@
             <td>
             <%= text_area_tag("description", @object["description"], :size => "114x10") %></td>
         </tr>
+	<tr>
+	    <td align="right">Подобъекты</td>
+	    <td>
+		<table>
+		    <tbody>
+			<tr>
+			    <th>Подобъекты</th>
+			    <th></th>
+			    <th>Все объекты</th>
+			</tr>
+			<tr>
+			    <td>
+				<% mdata = @object["children"] %>
+				<% formatted_data = mdata.each.map{ |h| { h["name"] => h["id"] }} %>
+				<% merged_hash = Hash[*formatted_data.map(&:to_a).flatten] %>
+				<%= select_tag("children", options_for_select(merged_hash), {:multiple => true}) %>
+			    </td>
+			    <td align="center">
+				<button name="button" onclick="rightToLeft();" type="button">&lt;&lt;</button><br>
+			    	<button name="button" onclick="leftToRight();" type="button">&gt;&gt;</button>
+			    </td>
+			    <td>
+				<% mdata = @object["not_children"] %>
+				<% formatted_data = mdata.each.map{ |h| { h["name"] => h["id"] }} %>
+				<% merged_hash = Hash[*formatted_data.map(&:to_a).flatten] %>
+				<%= select_tag("not_children", options_for_select(merged_hash), {:multiple => true}) %>
+			    </td>
+			</tr>
+		    </tbody>
+		</table>
+
+	    </td>
+	</tr>
         <tr>
             <td></td>
             <td><%= submit_tag("Сохранить") %></td>
@@ -20,6 +86,8 @@
     </tbody>
 <% end %>
 </table>
+
+
 <% if @object["id"] and @object["id"].to_i > 0 %>
     <%= link_to "Удалить объект", { :action => "object_delete", :id => @object["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить объект \"" + @object["name"] + "\"?');") %>
 <% end %>

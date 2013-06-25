@@ -110,9 +110,9 @@ class WriterController < ApplicationController
                         session["event_edit"] = nil
                         addError("Событие успешно сохранено")
                     else
-                        puts "=============================================="
-                        puts session["event_edit"]
-                        puts "=============================================="
+                        #puts "=============================================="
+                        #puts session["event_edit"]
+                        #puts "=============================================="
                     end
                     redirect_to :action => "main"
                     return
@@ -131,9 +131,9 @@ class WriterController < ApplicationController
                     session["event_edit"] = nil
                     addError("Событие успешно сохранено")
                 else
-                    puts "=============================================="
-                    puts session["event_edit"]
-                    puts "=============================================="
+                    #puts "=============================================="
+                    #puts session["event_edit"]
+                    #puts "=============================================="
                 end
             else
                 params["old"] = params.clone
@@ -252,8 +252,12 @@ class WriterController < ApplicationController
             object = Hash.new
             object["id"] = 0
         end
-
-        @object = object
+        
+	incs = AngbandDb.getObjectIncludes(id)
+	object["children"] = incs[0]
+	object["not_children"] = incs[1]
+        
+	@object = object
     end
 
     def object_write
@@ -282,7 +286,10 @@ class WriterController < ApplicationController
         end
 
         params["id"] = id
-        AngbandDb.writeObject(params, session[:user_id])
+        id = AngbandDb.writeObject(params, session[:user_id])
+
+	children = params["children_list"].split(" ")
+	AngbandDb.setObjectChildren(id, children)
         redirect_to :action => "objects"
     end
 

@@ -529,5 +529,25 @@ class AngbandDb < ActiveRecord::Base
         connection.delete("delete from location where id = #{sanitize(id)}")
     end
 
+    def self.getObjectIncludes(id)
+        rows = connection.select_all("select o.name, r.child_id as id from object o, object_ref r where r.parent_id = #{sanitize(id)} and r.child_id = o.id")
+	children = rows
+
+        c2 = children.map {|c| c["id"] }
+	c2.append(id)
+	s = c2.join(", ")
+	rows = connection.select_all("select name, id from object where id not in (#{s})")
+	not_children = rows
+	return [children, not_children]
+    end
+
+    def self.setObjectChildren(id, children)
+    	transaction do
+	    connection.delete("delete from object_ref where parent_id = #{sanitize(id)}");
+	    for c in children
+	    	connection.insert("insert into object_ref (parent_id, child_id) values (#{sanitize(id)}, #{sanitize(c)})")
+	    end
+	end
+    end
 end
 
