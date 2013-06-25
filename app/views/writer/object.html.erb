@@ -31,6 +31,9 @@
 
 <%= render "subheader" %>
 <h2>Объект</h2>
+<% if @object["id"] and @object["id"].to_i > 0 %>
+    <%= link_to "Список событий по объекту", { :action => "events", :obj_id => @object["id"] }, :class => "linkbutton" %>
+<% end %>
 <table width="100%">
 <%= form_tag({:action => "object_write"}, {:onsubmit => "onSubmit();"}) do %>
 <%= hidden_field_tag 'id', @object["id"] %>

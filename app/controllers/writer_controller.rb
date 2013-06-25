@@ -187,7 +187,11 @@ class WriterController < ApplicationController
             @params["qty"] = 100
         end
         
-        events = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone])
+        filters = {}
+        if params["obj_id"]
+            filters["objects"] = [params["obj_id"]]
+        end
+        events = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
 
         @params["events"] = events
     end

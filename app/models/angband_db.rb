@@ -311,7 +311,11 @@ class AngbandDb < ActiveRecord::Base
                 
                 # tags
                 puts "====== 5"
-                tags = getTagNamesAndIDs(event["tags"]) # hash names => ids
+		if not event["tags"].empty?
+                    tags = getTagNamesAndIDs(event["tags"]) # hash names => ids
+		else
+		    tags = Hash.new
+		end
 
                 puts "====== 6"
                 tags.each do |key, value|
@@ -364,6 +368,7 @@ class AngbandDb < ActiveRecord::Base
                     connection.insert("insert into event_tag (event_id, tag_id) values (#{event_id}, #{value})")
                 end
                 puts "====== 10"
+            rescue 
 
             rescue Exception => e
                 puts "EXCEPTION===================================="
@@ -383,20 +388,36 @@ class AngbandDb < ActiveRecord::Base
         connection.update("update event set status = 'D' where id = #{sanitize(id)}")
     end
 
-    def self.getEventList(from, qty, timezone)
+    def self.getEventList(from, qty, timezone, filters)
+        need_filter = false
+        filter_ids = [0]
+        if filters["objects"] and not filters["objects"].empty?
+            in_clause = filters["objects"].map { |x| sanitize(x) }.join(", ")
+            rows = connection.select_all("select event_id from event_object where object_id in (#{in_clause})")
+            for row in rows
+                filter_ids.append(row["event_id"])
+            end
+            need_filter = true
+        end
+
         sql = "select e.id, e.title, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, e.cr_date at time zone #{sanitize(timezone)} as cr_date, e.updater, up.name as up_name, e.up_date at time zone #{sanitize(timezone)} as up_date
                                       from event e, location l, reporter r, operator cr, operator up where
                                       e.status = 'N' and
                                       e.location_id = l.id and
                                       e.reporter_id = r.id and
                                       e.creator = cr.id and
-                                      e.updater = up.id order by e.id desc "
+                                      e.updater = up.id "
+        if need_filter
+            in_clause = filter_ids.map { |x| sanitize(x) }.join(", ")
+            sql += " and e.id in (#{in_clause})"
+        end
+        sql += " order by e.id desc "
         if qty > 0
-            sql = sql + "limit #{sanitize(qty)} "
+            sql = sql + " limit #{sanitize(qty)} "
         end
 
         if from > 0
-            sql = sql + "offset #{sanitize(from)}"
+            sql = sql + " offset #{sanitize(from)}"
         end
 
         rows = connection.select_all(sql)
