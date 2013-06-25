@@ -252,16 +252,17 @@ class WriterController < ApplicationController
             session["object"] = nil
         elsif id > 0
             object = AngbandDb.getObject(id, session["timezone"])
+            object["parent"] = AngbandDb.getObjectParent(id)
         else
             object = Hash.new
             object["id"] = 0
         end
         
-	incs = AngbandDb.getObjectIncludes(id)
-	object["children"] = incs[0]
-	object["not_children"] = incs[1]
+        incs = AngbandDb.getObjectIncludes(id)
+        object["children"] = incs[0]
+        object["not_children"] = incs[1]
         
-	@object = object
+        @object = object
     end
 
     def object_write
@@ -292,8 +293,8 @@ class WriterController < ApplicationController
         params["id"] = id
         id = AngbandDb.writeObject(params, session[:user_id])
 
-	children = params["children_list"].split(" ")
-	AngbandDb.setObjectChildren(id, children)
+        children = params["children_list"].split(" ")
+        AngbandDb.setObjectChildren(id, children)
         redirect_to :action => "objects"
     end
 

@@ -43,6 +43,12 @@
             <td align="right">Название:</td>
             <td align="left"><%= text_field_tag("name", @object["name"], :size => "100%", :maxlength => 250) %></td>
         </tr>
+        <tr>
+            <td align="right">Входит в объект(ы):</td>
+            <td lign="left">
+                <%= raw @object["parent"].map { |o| link_to o["name"], { :action => "object", :id => o["id"] } }.join(", ") %>
+            </td>
+        </tr>
         <tr valign="top">
             <td align="right">Описание:</td>
             <td>

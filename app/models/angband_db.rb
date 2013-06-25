@@ -462,7 +462,11 @@ class AngbandDb < ActiveRecord::Base
 
     def self.getObject(id, timezone)
         rows = connection.select_all("select id, name, description from object where id = #{sanitize(id)}")
-        return rows[0]
+        if rows.empty?
+            return Hash.new
+        else
+            return rows[0]
+        end
     end
 
     def self.findObjectByName(name)
@@ -575,12 +579,8 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.getObjectParent(id)
-    	rows = connection.select_all("select parent_id from object_ref where child_id = #{sanitize(id)}")
-	if rows.empty?
-	    return 0
-	else
-	    return rows[0]["parent_id"]
-	end
+    	rows = connection.select_all("select o.name, o.id from object o, object_ref r where o.id = r.parent_id and r.child_id = #{sanitize(id)}")
+        return rows
     end
 
     def self.setObjectChildren(id, children)
