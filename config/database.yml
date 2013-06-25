@@ -26,7 +26,7 @@ production:
   port: 5432
   username: melkor
   password: gfhjkm
-  database: angband
+  database: angband_release
   schema_search_path: public
   encoding: utf8
   template: template1

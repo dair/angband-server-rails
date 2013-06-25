@@ -392,5 +392,31 @@ class WriterController < ApplicationController
         redirect_to :action => "locations"
     end
 
+    def event_do_search
+        if not checkCredentials
+            return
+        end
+
+        s = params["substring"].strip
+        if s.length == 0
+            redirect_to "events"
+            return
+        end
+
+        event_ids = AngbandDb.searchEventBySubstring(params["substring"])
+        filters = {}
+        filters["events"] = {}
+        filters["events"]["ids"] = event_ids
+        if event_ids.empty?
+            events = []
+        else
+            events = AngbandDb.getEventList(0, 0, session[:timezone], filters)
+        end
+        @params = {}
+        @params["filters"] = filters
+        @params["events"] = events
+
+        render "events"
+    end
 end
 

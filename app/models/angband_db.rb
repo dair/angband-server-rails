@@ -409,6 +409,11 @@ class AngbandDb < ActiveRecord::Base
             sql_parts.append(" and location_id in (#{in_clause}) ")
             need_filter = true
         end
+        if filters["events"] and not filters["events"].empty?
+            in_clause = filters["events"]["ids"].map { |x| sanitize(x) }.join(", ")
+            sql_parts.append(" and e.id in (#{in_clause}) ")
+            need_filter = true
+        end
 
         sql = "select e.id, e.title, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, e.cr_date at time zone #{sanitize(timezone)} as cr_date, e.updater, up.name as up_name, e.up_date at time zone #{sanitize(timezone)} as up_date
                                       from event e, location l, reporter r, operator cr, operator up where
@@ -596,11 +601,20 @@ class AngbandDb < ActiveRecord::Base
 
     def self.setObjectChildren(id, children)
     	transaction do
-	    connection.delete("delete from object_ref where parent_id = #{sanitize(id)}");
-	    for c in children
-	    	connection.insert("insert into object_ref (parent_id, child_id) values (#{sanitize(id)}, #{sanitize(c)})")
+            connection.delete("delete from object_ref where parent_id = #{sanitize(id)}");
+            for c in children
+                connection.insert("insert into object_ref (parent_id, child_id) values (#{sanitize(id)}, #{sanitize(c)})")
+            end
 	    end
-	end
+    end
+
+    def self.searchEventBySubstring(substring)
+        s = sanitize(substring)
+        s = s[1, s.length - 2]
+        mysubstring = "'%" + s + "%'"
+        rows = connection.select_all("select id from event where upper(title) like upper(#{mysubstring}) or upper(description) like upper(#{mysubstring})")
+        ret = rows.map { |x| x["id"] }
+        return ret
     end
 end
 

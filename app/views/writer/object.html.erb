@@ -46,7 +46,9 @@
         <tr>
             <td align="right">Входит в объект(ы):</td>
             <td lign="left">
-                <%= raw @object["parent"].map { |o| link_to o["name"], { :action => "object", :id => o["id"] } }.join(", ") %>
+                <% if @object["parent"] %>
+                    <%= raw @object["parent"].map { |o| link_to o["name"], { :action => "object", :id => o["id"] } }.join(", ") %>
+                <% end %>
             </td>
         </tr>
         <tr valign="top">
@@ -69,7 +71,7 @@
 				<% mdata = @object["children"] %>
 				<% formatted_data = mdata.each.map{ |h| { h["name"] => h["id"] }} %>
 				<% merged_hash = Hash[*formatted_data.map(&:to_a).flatten] %>
-				<%= select_tag("children", options_for_select(merged_hash), {:multiple => true}) %>
+				<%= select_tag("children", options_for_select(merged_hash), {:size => 10}) %>
 			    </td>
 			    <td align="center">
 				<button name="button" onclick="rightToLeft();" type="button">&lt;&lt;</button><br>
@@ -79,7 +81,7 @@
 				<% mdata = @object["not_children"] %>
 				<% formatted_data = mdata.each.map{ |h| { h["name"] => h["id"] }} %>
 				<% merged_hash = Hash[*formatted_data.map(&:to_a).flatten] %>
-				<%= select_tag("not_children", options_for_select(merged_hash), {:multiple => true}) %>
+				<%= select_tag("not_children", options_for_select(merged_hash), {:size => 10}) %>
 			    </td>
 			</tr>
 		    </tbody>

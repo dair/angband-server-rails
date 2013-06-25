@@ -51,7 +51,6 @@ class AdminController < ApplicationController
                 @user = Hash.new
             end
         end
-        puts @user
         @roles = AngbandDb.getAllRoles()
     end
 

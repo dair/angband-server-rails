@@ -1,7 +1,7 @@
 \connect template1
-drop database angband;
-create database angband;
-\connect angband;
+drop database angband_release;
+create database angband_release;
+\connect angband_release;
 
 --  OPERATOR
 create table OPERATOR (
