@@ -390,7 +390,7 @@ class AngbandDb < ActiveRecord::Base
                                       e.location_id = l.id and
                                       e.reporter_id = r.id and
                                       e.creator = cr.id and
-                                      e.updater = up.id order by e.up_date asc "
+                                      e.updater = up.id order by e.id desc "
         if qty > 0
             sql = sql + "limit #{sanitize(qty)} "
         end
@@ -534,11 +534,32 @@ class AngbandDb < ActiveRecord::Base
 	children = rows
 
         c2 = children.map {|c| c["id"] }
-	c2.append(id)
+        
+	current_id = id
+	begin
+	    c2.append(current_id)
+	    rows = connection.select_all("select parent_id from object_ref where child_id = #{current_id}")
+	    if not rows.empty?
+                current_id = rows[0]["parent_id"]
+	    end
+	end until rows.empty?
+	
 	s = c2.join(", ")
+
 	rows = connection.select_all("select name, id from object where id not in (#{s})")
 	not_children = rows
+
+        
 	return [children, not_children]
+    end
+
+    def self.getObjectParent(id)
+    	rows = connection.select_all("select parent_id from object_ref where child_id = #{sanitize(id)}")
+	if rows.empty?
+	    return 0
+	else
+	    return rows[0]["parent_id"]
+	end
     end
 
     def self.setObjectChildren(id, children)
