@@ -189,10 +189,20 @@ class WriterController < ApplicationController
         
         filters = {}
         if params["obj_id"]
-            filters["objects"] = [params["obj_id"]]
+            filters["objects"] = {}
+            filters["objects"]["ids"] = [params["obj_id"]]
+            obj = AngbandDb.getObject(params["obj_id"], session["timezone"])
+            filters["objects"]["names"] = [obj["name"]]
+        end
+        if params["loc_id"]
+            filters["locations"] = {}
+            filters["locations"]["ids"] = [params["loc_id"]]
+            loc = AngbandDb.getLocation(params["loc_id"])
+            filters["locations"]["names"] = [loc["name"]]
         end
         events = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
 
+        @params["filters"] = filters
         @params["events"] = events
     end
 

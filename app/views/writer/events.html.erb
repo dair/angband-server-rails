@@ -6,6 +6,16 @@
     <%= submit_tag("Сохранить") %>
 <% end %>
 <br>
+<% if @params["filters"] %>
+    Фильтр: события с 
+    <% if @params["filters"]["objects"] %>
+        объектом(ами): <%= @params["filters"]["objects"]["names"].join(", ") %><br>
+    <% end %>
+    <% if @params["filters"]["locations"] %>
+        локации: <%= @params["filters"]["locations"]["names"].join(", ") %><br>
+    <% end %>
+<% end %>
+
 <table border=1>
     <tbody>
         <tr>

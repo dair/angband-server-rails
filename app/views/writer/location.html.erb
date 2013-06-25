@@ -1,5 +1,8 @@
 <%= render "subheader" %>
 <h2>Локация</h2>
+<% if @location["id"] and @location["id"].to_i > 0 %>
+    <%= link_to "Список событий по локации", { :action => "events", :loc_id => @location["id"] }, :class => "linkbutton" %>
+<% end %>
 <table width="100%">
 <%= form_tag(:action => "location_write") do %>
 <%= hidden_field_tag 'id', @location["id"] %>

@@ -390,13 +390,23 @@ class AngbandDb < ActiveRecord::Base
 
     def self.getEventList(from, qty, timezone, filters)
         need_filter = false
-        filter_ids = [0]
+        sql_parts = []
         if filters["objects"] and not filters["objects"].empty?
-            in_clause = filters["objects"].map { |x| sanitize(x) }.join(", ")
+            in_clause = filters["objects"]["ids"].map { |x| sanitize(x) }.join(", ")
             rows = connection.select_all("select event_id from event_object where object_id in (#{in_clause})")
+            filter_ids = [0]
             for row in rows
                 filter_ids.append(row["event_id"])
             end
+
+            in_clause = filter_ids.map { |x| sanitize(x) }.join(", ")
+            add_sql = " and e.id in (#{in_clause})"
+            sql_parts.append(add_sql)
+            need_filter = true
+        end
+        if filters["locations"] and not filters["locations"].empty?
+            in_clause = filters["locations"]["ids"].map { |x| sanitize(x) }.join(", ")
+            sql_parts.append(" and location_id in (#{in_clause}) ")
             need_filter = true
         end
 
@@ -408,8 +418,9 @@ class AngbandDb < ActiveRecord::Base
                                       e.creator = cr.id and
                                       e.updater = up.id "
         if need_filter
-            in_clause = filter_ids.map { |x| sanitize(x) }.join(", ")
-            sql += " and e.id in (#{in_clause})"
+            for s in sql_parts
+                sql += s
+            end
         end
         sql += " order by e.id desc "
         if qty > 0
