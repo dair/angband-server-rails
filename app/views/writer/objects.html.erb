@@ -1,6 +1,6 @@
 <%= render "subheader" %>
 
-<%= form_tag({:action => "events"}, :method => :get) do %>
+<%= form_tag({:action => "objects"}, :method => :get) do %>
     Показать объекты с №<%= text_field_tag("from", @params["from"], :maxlength => 10) %>
     общим количеством <%= text_field_tag("qty", @params["qty"], :maxlength => 10) %>
     <%= submit_tag("Сохранить") %>

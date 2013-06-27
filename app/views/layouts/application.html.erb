@@ -4,6 +4,9 @@
   <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
   <META HTTP-EQUIV="EXPIRES" CONTENT="0">
   <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<% if @refresh != nil and @refresh > 0 %>
+    <META http-equiv="refresh" content="<%= @refresh %>" />
+<% end %>
   <title><%= @title %></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>

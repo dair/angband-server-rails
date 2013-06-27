@@ -79,6 +79,9 @@ Angband::Application.routes.draw do
 
   get "writer/event_search"
   post "writer/event_do_search"
+
+  get "writer/map"
+  get "writer/map_image"
 #  get "application/main"
 #  get "application/events"
 #  get "application/event"

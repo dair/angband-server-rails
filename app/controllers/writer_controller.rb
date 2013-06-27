@@ -1,5 +1,7 @@
 # coding: UTF-8
 
+require 'csv'
+
 class WriterController < ApplicationController
     protect_from_forgery
     alias parent_checkCredentials checkCredentials
@@ -417,6 +419,106 @@ class WriterController < ApplicationController
         @params["events"] = events
 
         render "events"
+    end
+
+    def map_image
+        if params["image"] and params["image"].length > 0
+            file = IO.read(Rails.root.to_s + "/tmp/" + session[:user_id] + "_" + params["image"])
+        else
+            file = IO.read(Rails.root.to_s + "/public/map.jpg")
+        end
+
+        send_data file, :type => "image/jpg", :disposition => "inline"
+    end
+
+    def map
+        period = 8 # hours
+        if params["period"]
+            period = params["period"].to_i
+        end
+    
+        @params = {}
+        @params["period"] = period
+        @refresh = 5*60
+
+        counts = AngbandDb.eventMap(period)
+        imageMap = readImageMap
+
+        puts "=================="
+
+        max_qty = 0
+        for c in counts
+            if max_qty < c["count"].to_i
+                max_qty = c["count"].to_i
+            end
+        end
+        
+        source = Rails.root.to_s + "/public/map.jpg"
+        baseSource = source
+        imageParam = ""
+
+        outPath = Rails.root.to_s + "/tmp/" + session[:user_id] + "_"
+
+        if max_qty > 0
+            currentTmp = ""
+            counter = 0
+            for c in counts
+                im = imageMap[c["name"]]
+                count = c["count"].to_i
+                if im
+                    x = im["x"]
+                    y = im["y"]
+                    percent = count * 100 / max_qty
+
+                    # generate picture
+                    numPath = dummypic(count, percent)
+
+                    new_out = outPath + counter.to_s + ".png"
+                    blendTo(source, x, y, numPath, new_out)
+                    if source != baseSource
+                        File.delete(source)
+                    end
+                    source = new_out
+                    imageParam = counter.to_s + ".png"
+                else
+                    puts c["name"] + " not found"
+                end
+                counter += 1
+            end
+            puts "=================="
+        end
+
+        @params["image"] = imageParam
+    end
+
+    def dummypic(count, percent)
+        dummypicPath = Rails.root.to_s + "/lib/assets/dummypic"
+        resPath = Rails.root.to_s + "/public/images/" + count.to_s + "_" + percent.to_s + ".png"
+        if not File.exist?(resPath)
+            system("#{dummypicPath} 30x30 #{percent} #{count} #{resPath}")
+        end
+
+        return resPath
+    end
+
+    def blendTo(source, x, y, num, out)
+        system("composite -geometry +#{x}+#{y} #{num} #{source} #{out}")
+    end
+
+    def readImageMap
+        ret = {}
+        path = Rails.root
+        
+        CSV.foreach(path.to_s + "/public/loc-map.txt", :headers => false) do |row|
+            if row[2]
+                position = {}
+                position["x"] = row[0].to_i
+                position["y"] = row[1].to_i
+                ret[row[2]] = position
+            end
+        end
+
+        return ret
     end
 end
 

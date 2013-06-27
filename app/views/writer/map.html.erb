@@ -1,0 +1,5 @@
+<%= form_tag({:action => "map"}, :method => :get) do %>
+    Карта с событиями за последние <%= text_field_tag("period", @params["period"], :maxlength => 2) %> часов
+    <%= submit_tag("Показать") %>
+<% end %>
+<%= image_tag url_for(:controller => "writer", :action => "map_image", :image => @params["image"]) %>

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+echo "SIZE percent TEXT FILENAME" >&2
+
+SIZE="$1" # 320x480
+PERCENT="$2"
+TEXT="$3"
+FILENAME="$4"
+FILENAME_EXT=`echo "$FILENAME" | sed 's/.*\(\..*\)$/\1/'`
+FILENAME_BASE=`basename "$FILENAME" $FILENAME_EXT`
+echo $FILENAME_BASE
+echo $FILENAME_EXT
+
+WIDTH=`echo $SIZE | sed "s/x.*$//g"`
+HEIGHT=`echo $SIZE | sed "s/^.*x//g"`
+
+# font size:
+R=$((255*$PERCENT / 100))
+G=0
+B=$((255*(100-$PERCENT) / 100))
+
+COLOR=`printf "%02x%02x%02x" $R $G $B`
+
+function oneFile()
+{
+    WIDTH=$1
+    HEIGHT=$2
+    FILENAME=$3
+    RIGHT=$((WIDTH - 1))
+    BOTTOM=$((HEIGHT - 1))
+    
+    MEASURE="$WIDTH"
+    if [ $HEIGHT -lt $WIDTH ]; then
+        MEASURE="$HEIGHT"
+    fi
+
+    FONTSIZE=$((MEASURE / 8))
+    if [ $FONTSIZE -lt 14 ]; then
+        FONTSIZE=14
+    fi
+
+    convert -size "${WIDTH}x${HEIGHT}" xc:white -fill "#$COLOR" -stroke black -draw "rectangle 0,0 $RIGHT,$BOTTOM" -gravity center -font Helvetica -style Normal -pointsize $FONTSIZE -fill white -stroke white -draw "text 0,0 '$TEXT'" $FILENAME
+}
+
+oneFile $WIDTH $HEIGHT $FILENAME

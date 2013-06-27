@@ -1,0 +1,21 @@
+<%= render "subheader" %>
+<%= form_tag(:action => "event_do_search") do %>
+<table>
+    <tr valign="top">
+        <td align="right">Подстрока</td>
+        <td align="left"><%= text_field_tag("substring", "", :size => "100%", :maxlength => 255) %>
+        </td>
+        <tr>
+            <td></td>
+            <td>Подстрока ищется как в названии, так и в описании</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <%= submit_tag("Искать") %>
+            </td>
+        </tr>
+    </tr>
+
+</table>
+<% end %>
