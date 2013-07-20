@@ -36,7 +36,7 @@ class AngbandDb < ActiveRecord::Base
             ret = rows[0]
         end
 
-        objs_rows = connection.select_all("select o.id, o.name from object o, event_object eo where eo.event_id = #{ret["id"]} and eo.object_id = o.id order by o.name asc")
+        objs_rows = connection.select_all("select o.id, o.name from object o, event_object eo where eo.event_id = #{ret["id"]} and eo.object_id = o.id and o.status = 'N' order by o.name asc")
         objs = []
         for row in objs_rows
             objs.append(row["name"])
@@ -49,7 +49,7 @@ class AngbandDb < ActiveRecord::Base
         rep = connection.select_all("select name from reporter where id = #{ret["reporter_id"]}")
         ret["reporter"] = rep[0]["name"]
         
-        tags_rows = connection.select_all("select t.id, t.name from tag t, event_tag et where et.event_id = #{ret["id"]} and et.tag_id = t.id")
+        tags_rows = connection.select_all("select t.id, t.name from tag t, event_tag et where t.status = 'N' and et.event_id = #{ret["id"]} and et.tag_id = t.id")
         tags = []
         for row in tags_rows
             tags.append(row["name"])
@@ -110,7 +110,7 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.getAllObjectNames()
-        rows = connection.select_all("select name from object order by name asc")
+        rows = connection.select_all("select name from object where status='N' order by name asc")
         ret = Array.new
         for r in rows
             ret.append(r["name"])
@@ -185,7 +185,7 @@ class AngbandDb < ActiveRecord::Base
         end
         
         in_clause = tags.map { |x| sanitize(x) }.join(", ")
-        rows = connection.select_all("select name from tag where name in (#{in_clause})")
+        rows = connection.select_all("select name from tag where status = 'N' and name in (#{in_clause})")
         res = tags.clone
 
         for row in rows
@@ -241,7 +241,7 @@ class AngbandDb < ActiveRecord::Base
         tags2 = tags.clone
         
         in_clause = tags.map { |x| sanitize(x) }.join(", ")
-        sql = "select id, name from tag where name in (#{in_clause})"
+        sql = "select id, name from tag where status = 'N' and name in (#{in_clause})"
         rows = connection.select_all(sql)
         for row in rows
             ret[row["name"]] = row["id"]
@@ -320,7 +320,7 @@ class AngbandDb < ActiveRecord::Base
                 puts "====== 6"
                 tags.each do |key, value|
                     if value == 0
-                        id = connection.insert("insert into tag (name) values(#{sanitize(key)})")
+                        id = connection.insert("insert into tag (name, status) values(#{sanitize(key)}, 'N')")
                         if id.to_i <= 0
                             raise "Inserting tag returned invalid id"
                         end
@@ -443,7 +443,7 @@ class AngbandDb < ActiveRecord::Base
             objs = connection.select_all(sql)
             row["objects"] = objs
 
-            sql = "select t.id, t.name from tag t, event_tag et where et.event_id = #{event_id} and t.id = et.tag_id"
+            sql = "select t.id, t.name from tag t, event_tag et where t.status = 'N' and et.event_id = #{event_id} and t.id = et.tag_id"
             tags = connection.select_all(sql)
             row["tags"] = tags
 
@@ -571,31 +571,31 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.getObjectIncludes(id)
-        rows = connection.select_all("select o.name, r.child_id as id from object o, object_ref r where r.parent_id = #{sanitize(id)} and r.child_id = o.id order by o.name asc")
-	children = rows
+        rows = connection.select_all("select o.name, r.child_id as id from object o, object_ref r where r.parent_id = #{sanitize(id)} and r.child_id = o.id and o.status = 'N' order by o.name asc")
+        children = rows
 
         c2 = children.map {|c| c["id"] }
         
-	current_id = id
-	begin
-	    c2.append(current_id)
-	    rows = connection.select_all("select parent_id from object_ref where child_id = #{current_id}")
-	    if not rows.empty?
-                current_id = rows[0]["parent_id"]
-	    end
-	end until rows.empty?
-	
-	s = c2.join(", ")
-
-	rows = connection.select_all("select name, id from object where id not in (#{s}) order by name asc")
-	not_children = rows
-
+        current_id = id
+        begin
+            c2.append(current_id)
+            rows = connection.select_all("select parent_id from object_ref where child_id = #{current_id}")
+            if not rows.empty?
+                    current_id = rows[0]["parent_id"]
+            end
+        end until rows.empty?
         
-	return [children, not_children]
+        s = c2.join(", ")
+
+        rows = connection.select_all("select name, id from object where status = 'N' and id not in (#{s}) order by name asc")
+        not_children = rows
+
+            
+        return [children, not_children]
     end
 
     def self.getObjectParent(id)
-    	rows = connection.select_all("select o.name, o.id from object o, object_ref r where o.id = r.parent_id and r.child_id = #{sanitize(id)}")
+    	rows = connection.select_all("select o.name, o.id from object o, object_ref r where o.status = 'N' and o.id = r.parent_id and r.child_id = #{sanitize(id)}")
         return rows
     end
 
@@ -618,7 +618,11 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.eventMap(period)
-        rows = connection.select_all("select count(*), l.id, l.name from location l, event e where e.cr_date >= now() - '#{sanitize(period)}h'::interval and e.location_id = l.id  group by l.id order by l.id asc")
+        sqlin = ""
+        if period > 0
+           sqlin = "e.cr_date >= now() - '#{sanitize(period)}h'::interval and "
+        end
+        rows = connection.select_all("select count(e.id), l.id, l.name from location l left outer join event e on (#{sqlin} e.location_id = l.id)  group by l.id order by l.id asc")
         return rows
     end
 end

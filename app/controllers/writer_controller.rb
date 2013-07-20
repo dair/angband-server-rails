@@ -196,6 +196,7 @@ class WriterController < ApplicationController
             obj = AngbandDb.getObject(params["obj_id"], session["timezone"])
             filters["objects"]["names"] = [obj["name"]]
         end
+        
         if params["loc_id"]
             filters["locations"] = {}
             filters["locations"]["ids"] = [params["loc_id"]]
@@ -432,7 +433,7 @@ class WriterController < ApplicationController
     end
 
     def map
-        period = 8 # hours
+        period = 24 # hours
         if params["period"]
             period = params["period"].to_i
         end
@@ -443,8 +444,6 @@ class WriterController < ApplicationController
 
         counts = AngbandDb.eventMap(period)
         imageMap = readImageMap
-
-        puts "=================="
 
         max_qty = 0
         for c in counts
@@ -458,6 +457,10 @@ class WriterController < ApplicationController
         imageParam = ""
 
         outPath = Rails.root.to_s + "/tmp/" + session[:user_id] + "_"
+        
+        locations = []
+
+        unknown_x = 0
 
         if max_qty > 0
             currentTmp = ""
@@ -465,30 +468,34 @@ class WriterController < ApplicationController
             for c in counts
                 im = imageMap[c["name"]]
                 count = c["count"].to_i
+                percent = count * 100 / max_qty
+
+                # generate picture
+                numPath = dummypic(count, percent)
+
                 if im
                     x = im["x"]
                     y = im["y"]
-                    percent = count * 100 / max_qty
-
-                    # generate picture
-                    numPath = dummypic(count, percent)
-
-                    new_out = outPath + counter.to_s + ".png"
-                    blendTo(source, x, y, numPath, new_out)
-                    if source != baseSource
-                        File.delete(source)
-                    end
-                    source = new_out
-                    imageParam = counter.to_s + ".png"
                 else
-                    puts c["name"] + " not found"
+                    x = unknown_x
+                    y = 0
+                    unknown_x += 30
                 end
+                new_out = outPath + counter.to_s + ".png"
+                blendTo(source, x, y, numPath, new_out)
+                if source != baseSource
+                    File.delete(source)
+                end
+                source = new_out
+                imageParam = counter.to_s + ".png"
+                locations.append({"id" => c["id"], "name" => c["name"], "x" => x, "y" => y })
+                
                 counter += 1
             end
-            puts "=================="
         end
 
         @params["image"] = imageParam
+        @params["locations"] = locations
     end
 
     def dummypic(count, percent)

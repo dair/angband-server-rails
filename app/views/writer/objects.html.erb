@@ -14,8 +14,8 @@
             <th>Описание (не&nbsp;полностью)</th>
             <th>Создатель объекта</th>
             <th>Дата создания объекта</th>
-            <th>Последний редактировавший</th>
-            <th>Дата последнего редактирования</th>
+            <th>Последний редакти-<br>ровавший</th>
+            <th>Дата последнего редакти-<br>рования</th>
         </tr>
         <% for row in @params["objects"] %>
             <tr>
@@ -29,7 +29,7 @@
                 </td>
                 <td><%= row["description"] %></td>
                 <td><%= row["cr_name"] %></td>
-                <td><%= row["cr_date"] %></td>
+                <td><%= row["cr_date"][0, 19] %></td>
                 <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
                         <font color=<%= color %>>
                         <%= row["up_name"] %>
@@ -37,7 +37,7 @@
                 </td>
                 <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
                     <font color=<%= color %>>
-                        <%= row["up_date"] %>
+                        <%= row["up_date"][0, 19] %>
                     </font>
                 </td>
             </tr>

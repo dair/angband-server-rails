@@ -27,8 +27,8 @@
             <th>Известно по игре?</th>
             <th>Создатель события</th>
             <th>Дата создания события</th>
-            <th>Последний редактировавший</th>
-            <th>Дата последнего редактирования</th>
+            <th>Последний редакти-ровавший</th>
+            <th>Дата последнего редакти-рования</th>
             <th>Тэги</th>
         </tr>
         <% for row in @params["events"] %>
@@ -41,13 +41,13 @@
                     <% end %>
                     <%= link_to row["title"], { :action => "event", :controller => ctrl, :id => row["id"] } %>
                 </td>
-                <td><%= row["location_name"] %></td>
-                <td><%= row["objects"].map { |x| x["name"] }.join(", ") %></td>
+                <td><%= link_to row["location_name"], { :action => "location", :id => row["location_id"] }  %></td>
+                <td><%= raw row["objects"].map { |x| link_to(x["name"], { :action => "object", :id => x["id"] }) }.join(", ") %></td>
                 <td><%= row["reporter_name"] %></td>
-                <td><%= row["importance"] %></td>
+                <td align="center"><%= row["importance"] %></td>
                 <td><%= row["in_game"] == "t" ? "Да" : "Нет" %></td>
                 <td><%= row["cr_name"] %></td>
-                <td><%= row["cr_date"] %></td>
+                <td><%= row["cr_date"][0, 19] %></td>
                 <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
                         <font color=<%= color %>>
                         <%= row["up_name"] %>
@@ -55,7 +55,7 @@
                 </td>
                 <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
                     <font color=<%= color %>>
-                        <%= row["up_date"] %>
+                        <%= row["up_date"][0,19] %>
                     </font>
                 </td>
                 <td><%= row["tags"].map { |x| x["name"] }.join(", ") %></td>

@@ -1,5 +1,12 @@
+<%= render "subheader" %>
 <%= form_tag({:action => "map"}, :method => :get) do %>
-    Карта с событиями за последние <%= text_field_tag("period", @params["period"], :maxlength => 2) %> часов
+    Карта с событиями за последние <%= text_field_tag("period", @params["period"], :maxlength => 3) %> часов (0 &mdash; за всё время)
     <%= submit_tag("Показать") %>
-<% end %>
-<%= image_tag url_for(:controller => "writer", :action => "map_image", :image => @params["image"]) %>
+<% end %><br>
+В левом верхнем углу карты показаны события в отсутствующих на карте локациях<br>
+<%= image_tag url_for(:controller => "writer", :action => "map_image", :image => @params["image"]), {:usemap => "#locationmap" } %><br>
+<map name="locationmap">
+    <% for l in @params["locations"] %>
+        <area shape="rect" coords="<%= l["x"] %>,<%= l["y"] %>,<%= l["x"] + 30 %>,<%= l["y"] + 30 %>" href="events?loc_id=<%= l["id"] %>" alt="<%= l["name"] %>">
+    <% end %>
+</map>
