@@ -226,10 +226,11 @@ class WriterController < ApplicationController
             loc = AngbandDb.getLocation(params["loc_id"])
             filters["locations"]["names"] = [loc["name"]]
         end
-        events = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
+        (events, count) = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
 
         @params["filters"] = filters
         @params["events"] = events
+        @params["count"] = count
     end
 
     def event
@@ -267,7 +268,7 @@ class WriterController < ApplicationController
             @params["qty"] = 100
         end
        
-        objects = AngbandDb.getObjectList(id0(@params["from"]), id0(@params["qty"]), session[:timezone])
+        (objects, count) = AngbandDb.getObjectList(id0(@params["from"]), id0(@params["qty"]), session[:timezone])
         for obj in objects
             if obj["description"] and obj["description"].length > 50
                 obj["description"] = obj["description"][0, 50] + "..."
@@ -275,6 +276,7 @@ class WriterController < ApplicationController
         end
 
         @params["objects"] = objects
+        @params["count"] = count
     end
 
     def object
@@ -435,12 +437,14 @@ class WriterController < ApplicationController
         filters["events"]["ids"] = event_ids
         if event_ids.empty?
             events = []
+            count = 0
         else
-            events = AngbandDb.getEventList(0, 0, session[:timezone], filters)
+            (events, count) = AngbandDb.getEventList(0, 0, session[:timezone], filters)
         end
         @params = {}
         @params["filters"] = filters
         @params["events"] = events
+        @params["count"] = count
 
         render "events"
     end
@@ -506,9 +510,9 @@ class WriterController < ApplicationController
                 end
                 new_out = outPath + counter.to_s + ".png"
                 blendTo(source, x, y, numPath, new_out)
-                if source != baseSource
-                    File.delete(source)
-                end
+                #if source != baseSource
+                #    File.delete(source)
+                #end
                 source = new_out
                 imageParam = counter.to_s + ".png"
                 locations.append({"id" => c["id"], "name" => c["name"], "x" => x, "y" => y })

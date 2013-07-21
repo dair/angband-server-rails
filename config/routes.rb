@@ -107,12 +107,15 @@ Angband::Application.routes.draw do
 
   get "writer/map"
   get "writer/map_image"
-#  get "application/main"
-#  get "application/events"
-#  get "application/event"
-#  get "application/event_edit"
-#  post "application/event_write"
-#  get "application/map"
+
+  get "reader/events"
+  get "reader/event"
+  get "reader/objects"
+  get "reader/object"
+  get "reader/locations"
+  get "reader/location"
+  get "reader/event_search"
+  get "reader/map"
 
   # See how all your routes lay out with "rake routes"
 

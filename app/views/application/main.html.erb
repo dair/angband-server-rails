@@ -22,15 +22,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<% if @roles.include? "A" %>
-<%=     link_to "Администрирование", { :action => "main", :controller => "admin" }, :class => "linkbutton" %>
-<% end %>
+<% if @roles.kind_of? Array %>
+    <% if @roles.include? "A" %>
+    <%=     link_to "Администрирование", { :action => "main", :controller => "admin" }, :class => "linkbutton" %>
+    <% end %>
 
-<% if @roles.include? "R" %>
-<%=     link_to "Просмотр", { :action => "main", :controller => "reader" }, :class => "linkbutton" %>
-<% end %>
+    <% if @roles.include? "R" %>
+    <%=     link_to "Просмотр", { :action => "main", :controller => "reader" }, :class => "linkbutton" %>
+    <% end %>
 
-<% if @roles.include? "W" %>
-<%=     link_to "Регистрирование", { :action => "main", :controller => "writer" }, :class => "linkbutton" %>
+    <% if @roles.include? "W" %>
+    <%=     link_to "Регистрирование", { :action => "main", :controller => "writer" }, :class => "linkbutton" %>
+    <% end %>
 <% end %>
-

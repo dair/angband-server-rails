@@ -55,7 +55,11 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.getEvent(id, timezone)
-        rows = connection.select_all("select id, title, description, reporter_id, location_id, importance, in_game, creator, cr_date at time zone #{sanitize(timezone)} as cr_date, updater, up_date at time zone #{sanitize(timezone)} as up_date from EVENT where id = #{sanitize(id)}")
+        timezone_str = ""
+        if timezone
+            timezone_str = "at time zone #{sanitize(timezone)}"
+        end
+        rows = connection.select_all("select id, title, description, reporter_id, location_id, importance, in_game, creator, cr_date #{timezone_str} as cr_date, updater, up_date #{timezone_str} as up_date from EVENT where id = #{sanitize(id)}")
         ret = nil
         if rows.size == 1
             ret = rows[0]
@@ -63,10 +67,13 @@ class AngbandDb < ActiveRecord::Base
 
         objs_rows = connection.select_all("select o.id, o.name from object o, event_object eo where eo.event_id = #{ret["id"]} and eo.object_id = o.id and o.status = 'N' order by o.name asc")
         objs = []
+        obj_ids = []
         for row in objs_rows
             objs.append(row["name"])
+            obj_ids.append(row["id"])
         end
         ret["objects"] = objs
+        ret["obj_ids"] = obj_ids
 
         loc = connection.select_all("select name from location where id = #{ret["location_id"]}")
         ret["location"] = loc[0]["name"]
@@ -440,8 +447,15 @@ class AngbandDb < ActiveRecord::Base
             need_filter = true
         end
 
-        sql = "select e.id, e.title, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, e.cr_date at time zone #{sanitize(timezone)} as cr_date, e.updater, up.name as up_name, e.up_date at time zone #{sanitize(timezone)} as up_date
-                                      from event e, location l, reporter r, operator cr, operator up where
+        timezone_str = ""
+        if timezone
+            timezone_str = "at time zone #{sanitize(timezone)}"
+        end
+
+        sql_count = "select count(*)"
+        sql = "select e.id, e.title, char_length(e.description) as descr_len, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, e.cr_date #{timezone_str} as cr_date, e.updater, up.name as up_name, e.up_date #{timezone_str} as up_date"
+        
+        sql_from = " from event e, location l, reporter r, operator cr, operator up where
                                       e.status = 'N' and
                                       e.location_id = l.id and
                                       e.reporter_id = r.id and
@@ -449,9 +463,13 @@ class AngbandDb < ActiveRecord::Base
                                       e.updater = up.id "
         if need_filter
             for s in sql_parts
-                sql += s
+                sql_from += s
             end
         end
+
+        sql += sql_from
+        sql_count += sql_from
+
         sql += " order by e.id desc "
         if qty > 0
             sql = sql + " limit #{sanitize(qty)} "
@@ -479,15 +497,27 @@ class AngbandDb < ActiveRecord::Base
             puts "=========================="
         end
 
-        return rows
+        count_rows = connection.select_all(sql_count)
+        count = count_rows[0]["count"].to_i
+
+        return [rows, count]
     end
 
     def self.getObjectList(from, qty, timezone)
-        sql = "select o.id, o.name, o.description, o.creator, cr.name as cr_name, o.cr_date at time zone #{sanitize(timezone)} as cr_date, o.updater, up.name as up_name, o.up_date at time zone #{sanitize(timezone)} as up_date
-                                      from object o, operator cr, operator up where
+        timezone_str = ""
+        if timezone
+            timezone_str = "at time zone #{sanitize(timezone)}"
+        end
+        sql_count = "select count(*) "
+        sql = "select o.id, o.name, o.description, o.creator, cr.name as cr_name, o.cr_date #{timezone_str} as cr_date, o.updater, up.name as up_name, o.up_date #{timezone_str} as up_date "
+        sql_from = "from object o, operator cr, operator up where
                                       o.status = 'N' and
                                       o.creator = cr.id and
-                                      o.updater = up.id order by o.name asc "
+                                      o.updater = up.id "
+        sql += sql_from
+        sql += " order by o.name asc "
+        sql_count += sql_from
+
         if qty > 0
             sql = sql + "limit #{sanitize(qty)} "
         end
@@ -497,8 +527,10 @@ class AngbandDb < ActiveRecord::Base
         end
         
         rows = connection.select_all(sql)
+        count_rows = connection.select_all(sql_count)
+        count = count_rows[0]["count"].to_i
 
-        return rows
+        return [rows, count]
     end
 
     def self.getObject(id, timezone)

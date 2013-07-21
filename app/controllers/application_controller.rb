@@ -60,11 +60,11 @@ class ApplicationController < ActionController::Base
   end
 
   def index
-    if (session[:user_id])
+#    if (session[:user_id])
       redirect_to :action => "main"
-    else
-      render "layouts/login", :layout => false
-    end
+#    else
+#      render "layouts/login", :layout => false
+#    end
   end
 
   def login
@@ -118,10 +118,10 @@ class ApplicationController < ActionController::Base
   end
 
   def checkCredentials
-    if (not session[:user_id])
-      redirect_to :action => "index"
-      return false
-    end
+#    if (not session[:user_id])
+#      redirect_to :action => "index"
+#      return false
+#    end
     return true
   end
 
@@ -134,15 +134,20 @@ class ApplicationController < ActionController::Base
         return
     end
     roles = session[:userroles]
-    if roles.size == 1
-        case roles[0]
-            when 'A'
-                redirect_to :controller => "admin", :action => "main"
-            when 'W' # writer
-                redirect_to :controller => "writer", :action => "main"
-            when 'R'
-                redirect_to :controller => "reader", :action => "main"
+    if roles.kind_of? Array
+        if roles.size == 1
+            case roles[0]
+                when 'A'
+                    redirect_to :controller => "admin", :action => "main"
+                when 'W' # writer
+                    redirect_to :controller => "writer", :action => "main"
+                when 'R'
+                    redirect_to :controller => "reader", :action => "main"
+            end
+            return
         end
+    else
+        redirect_to :controller => "reader", :action => "events"
         return
     end
 

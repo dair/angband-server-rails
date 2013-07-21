@@ -29,11 +29,19 @@ limitations under the License.
                 <img src="/assets/site_name.png">
             </td>
             <td align="center" border="1">
-<h3><%= @subtitle %></h3>
+                <h3><%= @subtitle %></h3>
             </td>
             <td valign="center" align="right">
-                <%= form_tag(:controller => "application", :action => "logout") do %>
-                    <%= @username %>&nbsp;<input type="submit" value="Выйти" name="Logout" />
+                <% if @username.kind_of? String and @username.length > 0 %>
+                    <%= form_tag(:controller => "application", :action => "logout") do %>
+                        <%= @username %>&nbsp;<input type="submit" value="Выйти" name="Logout" />
+                    <% end %>
+                <% else %>
+                    <%= form_tag(:controller => "application", :action => "login") do %>
+                        <input name="name" id="name" /><br>
+                        <input name="password" id="password" type="password" /><br>
+                        <input type="submit" value="Войти" name="Login" />
+                    <% end %>
                 <% end %>
             </td>
         </tr>
