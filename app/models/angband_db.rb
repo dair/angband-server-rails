@@ -470,7 +470,7 @@ class AngbandDb < ActiveRecord::Base
         sql += sql_from
         sql_count += sql_from
 
-        sql += " order by e.id desc "
+        sql += " order by e.id asc "
         if qty > 0
             sql = sql + " limit #{sanitize(qty)} "
         end
@@ -681,6 +681,23 @@ class AngbandDb < ActiveRecord::Base
         end
         rows = connection.select_all("select count(e.id), l.id, l.name from location l left outer join event e on (#{sqlin} e.location_id = l.id)  group by l.id order by l.id asc")
         return rows
+    end
+
+    def self.increaseCounter(url)
+        rows = connection.select_all("select count from counter where url = #{sanitize(url)}")
+        count = 0
+        if not rows.empty?
+            count = rows[0]["count"].to_i
+        end
+
+        count = count + 1
+        if count == 1
+            connection.insert("insert into counter (url, count) values (#{sanitize(url)}, 1)")
+        else
+            connection.update("update counter set count = count + 1 where url = #{sanitize(url)}")
+        end
+
+        return count
     end
 end
 

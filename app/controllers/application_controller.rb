@@ -33,6 +33,7 @@ class ApplicationController < ActionController::Base
       @last_error = nil
     end
     @username = session[:username]
+    @url = request.fullpath
   end
 
   def render(options = nil, extra_options = {}, &block)
