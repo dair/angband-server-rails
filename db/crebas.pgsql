@@ -22,11 +22,6 @@
 -- limitations under the License.
 
 
-\connect template1
-drop database angband;
-create database angband;
-\connect angband;
-
 --  OPERATOR
 create table OPERATOR (
     id varchar(255) not null,
@@ -251,3 +246,9 @@ insert into ALL_ROLE (id, name) values('W', 'Писец');
 insert into OPERATOR (id, name, password) values ('admin', 'admin', 'admin');
 insert into OPERATOR_ROLE (operator_id, status) values ('admin', 'A');
 
+
+CREATE TABLE counter(
+    url varchar(1000) not null,
+    count bigint not null default 0,
+    constraint counter__pk primary key (url)
+);
