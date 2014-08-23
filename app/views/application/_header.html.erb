@@ -38,14 +38,12 @@ limitations under the License.
                     <% end %>
                 <% else %>
                     <%= form_tag(:controller => "application", :action => "login") do %>
+                        <input type="hidden" id="timezone" name="timezone">
                         <input name="name" id="name" /><br>
                         <input name="password" id="password" type="password" /><br>
                         <input type="submit" value="Войти" name="Login" />
                     <% end %>
                 <% end %>
-            </td>
-            <td align="right" width="300">
-                <a href="http://www.fallout2014.ru"><img src="http://dair.spb.ru/pics/fallout-300.jpg"/></a>
             </td>
         </tr>
 <% if @last_error %>

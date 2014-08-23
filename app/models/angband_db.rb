@@ -679,7 +679,7 @@ class AngbandDb < ActiveRecord::Base
         if period > 0
            sqlin = "e.cr_date >= now() - '#{sanitize(period)}h'::interval and "
         end
-        rows = connection.select_all("select count(e.id), l.id, l.name from location l left outer join event e on (#{sqlin} e.location_id = l.id)  group by l.id order by l.id asc")
+        rows = connection.select_all("select count(e.id), l.id, l.name from location l left outer join event e on (#{sqlin} e.location_id = l.id and e.status = 'N') group by l.id order by l.id asc")
         return rows
     end
 
