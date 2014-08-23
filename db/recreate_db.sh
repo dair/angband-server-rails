@@ -3,9 +3,11 @@
 set -x
 set -e
 
-USER=f14_bitz
-DB=f14_bitz
-PWD=f14_bitz_gfhjkm
+DBNAME=vedmak2014_bitz
+
+USER=${DBNAME}
+DB=${DBNAME}
+PWD=${DBNAME}_gfhjkm
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 FILE="$DIR/crebas.pgsql"
