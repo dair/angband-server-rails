@@ -4,7 +4,7 @@ development:
   port: 5432
   username: vedmak2014_bitz
   password: vedmak2014_bitz_gfhjkm
-  database: vedmak2014_bitz
+  database: steam2016_bitz
   schema_search_path: public
   encoding: utf8
   template: template1
@@ -15,7 +15,7 @@ test:
   port: 5432
   username: vedmak2014_bitz
   password: vedmak2014_bitz_gfhjkm
-  database: vedmak2014_bitz
+  database: steam2016_bitz
   schema_search_path: public
   encoding: utf8
   template: template1
@@ -26,7 +26,7 @@ production:
   port: 5432
   username: vedmak2014_bitz
   password: vedmak2014_bitz_gfhjkm
-  database: vedmak2014_bitz
+  database: steam2016_bitz
 #  database: vedmak2014_bitz
   schema_search_path: public
   encoding: utf8
