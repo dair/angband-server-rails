@@ -37,6 +37,7 @@ create table OBJECT (
     id bigint not null,
     name varchar(255) not null,
     description text,
+    url varchar(255) default null,
     status char(1) not null,
 
     creator character varying (255) default null,

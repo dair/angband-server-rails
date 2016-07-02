@@ -33,6 +33,12 @@ limitations under the License.
             <td align="right" width=10%>Название:</td>
             <td align="left"><%= @object["name"] %></td>
         </tr>
+        <% if @object["url"] %>
+        <tr>
+            <td align="right" width=10%>URL:</td>
+            <td align="left"><a href="<%= @object["url"] %>">подробнее</a></td>
+        </tr>
+        <% end %>
         <tr>
             <td align="right">Входит в объект(ы):</td>
             <td lign="left">

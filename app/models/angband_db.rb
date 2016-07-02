@@ -534,7 +534,7 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.getObject(id, timezone)
-        rows = connection.select_all("select id, name, description from object where id = #{sanitize(id)}")
+        rows = connection.select_all("select id, name, description, url from object where id = #{sanitize(id)}")
         if rows.empty?
             return Hash.new
         else
