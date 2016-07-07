@@ -56,7 +56,7 @@ limitations under the License.
         <% for row in @params["events"] %>
             <tr>
                 <td>
-                    <% if session[:userroles].include? "W" %>
+                    <% if not session[:userroles].nil? and session[:userroles].include? "W" %>
                         <% ctrl = "writer" %>
                     <% else %>
                         <% ctrl = "reader" %>

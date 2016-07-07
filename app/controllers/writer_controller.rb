@@ -203,51 +203,6 @@ class WriterController < ApplicationController
         return true
     end
 
-    def events
-        if not checkCredentials
-            return
-        end
-
-        @params = params
-        if not params
-            @params = Hash.new
-        end
-        if not @params["from"]
-            @params["from"] = 0
-        end
-        if not @params["qty"]
-            @params["qty"] = 1000
-        end
-        
-        filters = {}
-        if params["obj_id"]
-            filters["objects"] = {}
-            filters["objects"]["ids"] = [params["obj_id"]]
-            obj = AngbandDb.getObject(params["obj_id"], session["timezone"])
-            filters["objects"]["names"] = [obj["name"]]
-        end
-        
-        if params["loc_id"]
-            filters["locations"] = {}
-            filters["locations"]["ids"] = [params["loc_id"]]
-            loc = AngbandDb.getLocation(params["loc_id"])
-            filters["locations"]["names"] = [loc["name"]]
-        end
-
-        if params["tag_id"]
-            filters["tags"] = {}
-            filters["tags"]["ids"] = [params["tag_id"]]
-            tag = AngbandDb.getTag(params["tag_id"])
-            filters["tags"]["names"] = [tag["name"]]
-        end
-
-        (events, count) = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
-
-        @params["filters"] = filters
-        @params["events"] = events
-        @params["count"] = count
-    end
-
     def event
         main
     end
@@ -573,14 +528,5 @@ class WriterController < ApplicationController
         return ret
     end
 
-    def tags
-        if not checkCredentials
-            return
-        end
-
-        tags = AngbandDb.getTagList()
-        @params = {}
-        @params["tags"] = tags
-    end
 end
 

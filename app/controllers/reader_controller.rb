@@ -30,39 +30,6 @@ class ReaderController < ApplicationController
         redirect_to :controller => "reader", :action => "events"
     end
 
-    def events
-        @params = params
-        if not params
-            @params = Hash.new
-        end
-        if not @params["from"]
-            @params["from"] = 0
-        end
-        if not @params["qty"]
-            @params["qty"] = 1000
-        end
-        
-        filters = {}
-        if params["obj_id"]
-            filters["objects"] = {}
-            filters["objects"]["ids"] = [params["obj_id"]]
-            obj = AngbandDb.getObject(params["obj_id"], session["timezone"])
-            filters["objects"]["names"] = [obj["name"]]
-        end
-        
-        if params["loc_id"]
-            filters["locations"] = {}
-            filters["locations"]["ids"] = [params["loc_id"]]
-            loc = AngbandDb.getLocation(params["loc_id"])
-            filters["locations"]["names"] = [loc["name"]]
-        end
-        (events, count) = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
-
-        @params["filters"] = filters
-        @params["events"] = events
-        @params["count"] = count
-    end
-
     def event
         id = id0(params["id"])
         if id == 0
@@ -71,30 +38,6 @@ class ReaderController < ApplicationController
         end
 
         @event = AngbandDb.getEvent(id, session["timezone"])
-    end
-
-    def objects
-        if not params
-            @params = Hash.new
-        else
-            @params = params
-        end
-        if not @params["from"]
-            @params["from"] = 0
-        end
-        if not @params["qty"]
-            @params["qty"] = 100
-        end
-       
-        (objects, count) = AngbandDb.getObjectList(id0(@params["from"]), id0(@params["qty"]), session[:timezone])
-        for obj in objects
-            if obj["description"] and obj["description"].length > 50
-                obj["description"] = obj["description"][0, 50] + "..."
-            end
-        end
-
-        @params["objects"] = objects
-        @params["count"] = count
     end
 
     def object

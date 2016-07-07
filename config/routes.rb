@@ -118,6 +118,7 @@ Angband::Application.routes.draw do
   get "reader/map"
 
   get "writer/tags"
+  get "reader/tags"
 
   # See how all your routes lay out with "rake routes"
 
