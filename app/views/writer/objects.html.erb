@@ -36,6 +36,7 @@ limitations under the License.
     <tbody>
         <tr>
             <th>Название</th>
+            <th></th>
             <th>Описание (не&nbsp;полностью)</th>
             <th>Создатель объекта</th>
             <th>Дата создания объекта</th>
@@ -44,13 +45,14 @@ limitations under the License.
         </tr>
         <% for row in @params["objects"] %>
             <tr>
+                <td><div><%=row["name"]%></div></td>
                 <td>
                     <% if not session[:userroles].nil? and session[:userroles].include? "W" %>
                         <% ctrl = "writer" %>
                     <% else %>
                         <% ctrl = "reader" %>
                     <% end %>
-                    <%= link_to row["name"], { :action => "object", :controller => ctrl, :id => row["id"] } %>
+                    <%= link_to "X", { :action => "object", :controller => ctrl, :id => row["id"] } %>
                 </td>
                 <td><%= row["description"] %></td>
                 <td><%= row["cr_name"] %></td>
