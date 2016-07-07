@@ -78,7 +78,17 @@ limitations under the License.
                         <%= row["up_date"][0,19] %>
                     </font>
                 </td>
-                <td><%= row["tags"].map { |x| x["name"] }.join(", ") %></td>
+                <td>
+                    <%
+                        tagLine = ""
+                        for x in row["tags"]
+                    %>
+                    <%= link_to x["name"], {:action => "events", :tag_id => x["id"] } %><br>
+                    <%      
+                        end
+                    %>
+<!--                    <%= row["tags"].map { |x| link_to x["name"], { :action => "events", :tag_id => x["id"] } }.join(", ") %> -->
+                </td>
 
             </tr>
         <% end %>
