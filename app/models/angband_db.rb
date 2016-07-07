@@ -343,11 +343,11 @@ class AngbandDb < ActiveRecord::Base
                 
                 # tags
                 puts "====== 5"
-		if not event["tags"].empty?
+        if not event["tags"].empty?
                     tags = getTagNamesAndIDs(event["tags"]) # hash names => ids
-		else
-		    tags = Hash.new
-		end
+        else
+            tags = Hash.new
+        end
 
                 puts "====== 6"
                 tags.each do |key, value|
@@ -436,6 +436,20 @@ class AngbandDb < ActiveRecord::Base
             sql_parts.append(add_sql)
             need_filter = true
         end
+        if filters["tags"] and not filters["tags"].empty?
+            in_clause = filters["tags"]["ids"].map { |x| sanitize(x) }.join(", ")
+            rows = connection.select_all("select event_id from event_tag where tag_id in (#{in_clause})")
+            filter_ids = [0]
+            for row in rows
+                filter_ids.append(row["event_id"])
+            end
+
+            in_clause = filter_ids.map { |x| sanitize(x) }.join(", ")
+            add_sql = " and e.id in (#{in_clause})"
+            sql_parts.append(add_sql)
+            need_filter = true
+        end
+
         if filters["locations"] and not filters["locations"].empty?
             in_clause = filters["locations"]["ids"].map { |x| sanitize(x) }.join(", ")
             sql_parts.append(" and location_id in (#{in_clause}) ")
@@ -446,7 +460,6 @@ class AngbandDb < ActiveRecord::Base
             sql_parts.append(" and e.id in (#{in_clause}) ")
             need_filter = true
         end
-
         timezone_str = ""
         if timezone
             timezone_str = "at time zone #{sanitize(timezone)}"
@@ -486,7 +499,7 @@ class AngbandDb < ActiveRecord::Base
             objs = connection.select_all(sql)
             row["objects"] = objs
 
-            sql = "select t.id, t.name from tag t, event_tag et where t.status = 'N' and et.event_id = #{event_id} and t.id = et.tag_id"
+            sql = "select t.id, t.name from tag t, event_tag et where t.status = 'N' and et.event_id = #{event_id} and t.id = et.tag_id order by t.name asc"
             tags = connection.select_all(sql)
             row["tags"] = tags
 
@@ -573,6 +586,20 @@ class AngbandDb < ActiveRecord::Base
         connection.update("update object set status = 'D' where id = #{sanitize(id)}")
     end
 
+    def self.getTagList()
+        rows = connection.select_all("select id, name from tag")
+        return rows
+    end
+
+    def self.getTag(id)
+        rows = connection.select_all("select id, name from tag where id = #{sanitize(id)}")
+        if rows.empty?
+            return Hash.new
+        else
+            return rows[0]
+        end
+    end
+
     def self.getLocationList()
         rows = connection.select_all("select id, name from location order by name asc")
         return rows
@@ -652,17 +679,17 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.getObjectParent(id)
-    	rows = connection.select_all("select o.name, o.id from object o, object_ref r where o.status = 'N' and o.id = r.parent_id and r.child_id = #{sanitize(id)}")
+        rows = connection.select_all("select o.name, o.id from object o, object_ref r where o.status = 'N' and o.id = r.parent_id and r.child_id = #{sanitize(id)}")
         return rows
     end
 
     def self.setObjectChildren(id, children)
-    	transaction do
+        transaction do
             connection.delete("delete from object_ref where parent_id = #{sanitize(id)}");
             for c in children
                 connection.insert("insert into object_ref (parent_id, child_id) values (#{sanitize(id)}, #{sanitize(c)})")
             end
-	    end
+        end
     end
 
     def self.searchEventBySubstring(substring)

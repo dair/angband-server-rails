@@ -117,6 +117,8 @@ Angband::Application.routes.draw do
   get "reader/event_search"
   get "reader/map"
 
+  get "writer/tags"
+
   # See how all your routes lay out with "rake routes"
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.

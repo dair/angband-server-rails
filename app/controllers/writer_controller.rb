@@ -234,6 +234,13 @@ class WriterController < ApplicationController
             filters["locations"]["names"] = [loc["name"]]
         end
 
+        if params["tag_id"]
+            filters["tags"] = {}
+            filters["tags"]["ids"] = [params["tag_id"]]
+            tag = AngbandDb.getTag(params["tag_id"])
+            filters["tags"]["names"] = [tag["name"]]
+        end
+
         (events, count) = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
 
         @params["filters"] = filters
@@ -564,6 +571,16 @@ class WriterController < ApplicationController
         end
 
         return ret
+    end
+
+    def tags
+        if not checkCredentials
+            return
+        end
+
+        tags = AngbandDb.getTagList()
+        @params = {}
+        @params["tags"] = tags
     end
 end
 

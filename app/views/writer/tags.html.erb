@@ -22,16 +22,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<%= link_to "Список событий", { :action => "events" }, :class => "linkbutton" %>
-<%= link_to "Список объектов", { :action => "objects" }, :class => "linkbutton" %>
-<%= link_to "Список локаций", { :action => "locations" }, :class => "linkbutton" %>
-<%= link_to "Список тэгов", { :action => "tags" }, :class => "linkbutton" %>
-<br><br><br>
-<%= link_to "Новое событие", { :action => "event" }, :class => "linkbutton" %>
-<%= link_to "Новый объект", { :action => "object" }, :class => "linkbutton" %>
-<%= link_to "Новая локация", { :action => "location" }, :class => "linkbutton" %>
-<br><br><br>
-<%= link_to "Поиск события", { :action => "event_search" }, :class => "linkbutton" %>
-<%= link_to "Карта событий", { :action => "map" }, :class => "linkbutton" %>
-<br><br><br>
+
+<%= render "subheader" %>
+
+<br>
+<table border=1>
+    <tbody>
+        <tr>
+            <th>Название</th>
+        </tr>
+        <% for row in @params["tags"] %>
+            <tr>
+                <td><%= link_to row["name"], { :action => "events", :tag_id => row["id"] } %></td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>
+
 
