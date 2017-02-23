@@ -491,10 +491,10 @@ class AngbandDb < ActiveRecord::Base
             row["tags"] = tags
 
             cr_date = row["cr_date"]
-            puts "=========================="
-            puts cr_date
-            puts cr_date.class.name
-            puts "=========================="
+            #puts "=========================="
+            #puts cr_date
+            #puts cr_date.class.name
+            #puts "=========================="
         end
 
         count_rows = connection.select_all(sql_count)
