@@ -22,40 +22,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-  <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-  <META HTTP-EQUIV="EXPIRES" CONTENT="0">
-  <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-<% if @refresh != nil and @refresh > 0 %>
-    <META http-equiv="refresh" content="<%= @refresh %>" />
-<% end %>
-  <title><%= @title %></title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-    <table width="100%" border="0" style="margin: 0;">
-        <tbody>
-            <tr>
-                <td>
-                    <%= render "header" %>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <%= yield %>
-                </td>
-            </tr>
-            <tr valign="bottom">
-                <td>
-                    <font size="-2"><div align="right"><%= AngbandDb.increaseCounter(@url.to_s) %></div></font>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</body>
-</html>
+<%= render "subheader" %>
 
+<h2>Список локаций</h2>
+
+<table border=1>
+    <tbody>
+        <tr>
+            <th>Название</th>
+        </tr>
+        <% for row in @params["locations"] %>
+            <tr>
+                <td>
+                    <% if session[:userroles].include? "W" %>
+                        <% ctrl = "writer" %>
+                    <% else %>
+                        <% ctrl = "reader" %>
+                    <% end %>
+                    <%= link_to row["name"], { :action => "location", :controller => ctrl, :id => row["id"] } %>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>

@@ -1,0 +1,128 @@
+<!--
+##################################################################
+Angband Informational Center
+For First Age LARP (http://firstage2013.ru)
+by Vladimir "Dair" Lebedev-Schmidthof <dair@albiongames.org>
+Mk. Albion (http://albiongames.org)
+
+Copyright (c) 2013 Vladimir Lebedev-Schmidthof
+##################################################################
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+This file is also provided in the root directory of this project
+as LICENSE.txt
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<script>
+	function leftToRight()
+	{
+		var left = document.getElementById("children");
+		var right = document.getElementById("not_children");
+		var idx = left.selectedIndex;
+		right.options[right.options.length] = new Option(left.options[idx].text, left.options[idx].value);
+		$("#children option:selected").remove();
+	}
+	
+	function rightToLeft()
+	{
+		var left = document.getElementById("children");
+		var right = document.getElementById("not_children");
+		var idx = right.selectedIndex;
+		left.options[left.options.length] = new Option(right.options[idx].text, right.options[idx].value);
+		$("#not_children option:selected").remove();
+	}
+
+	function onSubmit()
+	{
+		children = document.getElementById("children");
+		s = "";
+		for (var i = 0; i < children.options.length; i++)
+		{
+			s = s + " " + children.options[i].value;
+		}
+		document.getElementById("children_list").value = s;
+	}
+</script>
+
+<%= render "subheader" %>
+<h2>Объект</h2>
+<% if @object["id"] and @object["id"].to_i > 0 %>
+    <%= link_to "Список событий по объекту", { :action => "events", :obj_id => @object["id"] }, :class => "linkbutton" %>
+<% end %>
+<table width="100%">
+<%= form_tag({:action => "object_write"}, {:onsubmit => "onSubmit();"}) do %>
+<%= hidden_field_tag 'id', @object["id"] %>
+<%= hidden_field_tag 'children_list', @object["children"].map {|c| c["id"] } %>
+    <tbody>
+        <tr>
+            <td align="right">Название:</td>
+            <td align="left"><%= text_field_tag("name", @object["name"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr>
+            <td align="right">Входит в объект(ы):</td>
+            <td lign="left">
+                <% if @object["parent"] %>
+                    <%= raw @object["parent"].map { |o| link_to o["name"], { :action => "object", :id => o["id"] } }.join(", ") %>
+                <% end %>
+            </td>
+        </tr>
+        <tr valign="top">
+            <td align="right">Описание:</td>
+            <td>
+            <%= text_area_tag("description", @object["description"], :size => "114x10") %></td>
+        </tr>
+	<tr>
+	    <td align="right">Подобъекты</td>
+	    <td>
+		<table>
+		    <tbody>
+			<tr>
+			    <th>Подобъекты</th>
+			    <th></th>
+			    <th>Все объекты</th>
+			</tr>
+			<tr>
+			    <td>
+				<% mdata = @object["children"] %>
+				<% formatted_data = mdata.each.map{ |h| { h["name"] => h["id"] }} %>
+				<% merged_hash = Hash[*formatted_data.map(&:to_a).flatten] %>
+				<%= select_tag("children", options_for_select(merged_hash), {:size => 10}) %>
+			    </td>
+			    <td align="center">
+				<button name="button" onclick="rightToLeft();" type="button">&lt;&lt;</button><br>
+			    	<button name="button" onclick="leftToRight();" type="button">&gt;&gt;</button>
+			    </td>
+			    <td>
+				<% mdata = @object["not_children"] %>
+				<% formatted_data = mdata.each.map{ |h| { h["name"] => h["id"] }} %>
+				<% merged_hash = Hash[*formatted_data.map(&:to_a).flatten] %>
+				<%= select_tag("not_children", options_for_select(merged_hash), {:size => 10}) %>
+			    </td>
+			</tr>
+		    </tbody>
+		</table>
+
+	    </td>
+	</tr>
+        <tr>
+            <td></td>
+            <td><%= submit_tag("Сохранить") %></td>
+        </tr>
+    </tbody>
+<% end %>
+</table>
+
+
+<% if @object["id"] and @object["id"].to_i > 0 %>
+    <%= link_to "Удалить объект", { :action => "object_delete", :id => @object["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить объект \"" + @object["name"] + "\"?');") %>
+<% end %>
+

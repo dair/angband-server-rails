@@ -1,0 +1,81 @@
+<!--
+##################################################################
+Angband Informational Center
+For First Age LARP (http://firstage2013.ru)
+by Vladimir "Dair" Lebedev-Schmidthof <dair@albiongames.org>
+Mk. Albion (http://albiongames.org)
+
+Copyright (c) 2013 Vladimir Lebedev-Schmidthof
+##################################################################
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+This file is also provided in the root directory of this project
+as LICENSE.txt
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<%= render "subheader" %>
+
+<%= form_tag({:action => "objects"}, :method => :get) do %>
+    <% if @params["from"].to_i > 0 %>
+        <% prev_from = @params["from"].to_i - @params["qty"].to_i %>
+        <% prev_from = 0 if prev_from < 0 %>
+        <%= link_to "<<< Предыдущая страница", { :action => "objects", :from => prev_from.to_s, :qty => @params["qty"] } %>
+    <% end %>
+    Показать объекты с №<%= text_field_tag("from", @params["from"], :maxlength => 10) %>
+    общим количеством <%= text_field_tag("qty", @params["qty"], :maxlength => 10) %>
+    <%= submit_tag("Сохранить") %>
+    <% next_from = @params["from"].to_i + @params["qty"].to_i %>
+    <% if next_from < @params["count"] %>
+        <%= link_to "Следующая страница >>>", { :action => "objects", :from => next_from.to_s, :qty => @params["qty"] } %>
+    <% end %>
+<% end %>
+
+<br>
+<table border=1>
+    <tbody>
+        <tr>
+            <th>Название</th>
+            <th>Описание (не&nbsp;полностью)</th>
+            <th>Создатель объекта</th>
+            <th>Дата создания объекта</th>
+            <th>Последний редакти-<br>ровавший</th>
+            <th>Дата последнего редакти-<br>рования</th>
+        </tr>
+        <% for row in @params["objects"] %>
+            <tr>
+                <td>
+                    <% if session[:userroles].kind_of? Array and session[:userroles].include? "W" %>
+                        <% ctrl = "writer" %>
+                    <% else %>
+                        <% ctrl = "reader" %>
+                    <% end %>
+                    <%= link_to row["name"], { :action => "object", :controller => ctrl, :id => row["id"] } %>
+                </td>
+                <td><%= row["description"] %></td>
+                <td><%= row["cr_name"] %></td>
+                <td><%= row["cr_date"][0, 19] %></td>
+                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
+                        <font color=<%= color %>>
+                        <%= row["up_name"] %>
+                        </font>
+                </td>
+                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
+                    <font color=<%= color %>>
+                        <%= row["up_date"][0, 19] %>
+                    </font>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>
+

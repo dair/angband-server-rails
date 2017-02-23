@@ -1,0 +1,133 @@
+<!--
+##################################################################
+Angband Informational Center
+For First Age LARP (http://firstage2013.ru)
+by Vladimir "Dair" Lebedev-Schmidthof <dair@albiongames.org>
+Mk. Albion (http://albiongames.org)
+
+Copyright (c) 2013 Vladimir Lebedev-Schmidthof
+##################################################################
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+This file is also provided in the root directory of this project
+as LICENSE.txt
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<%= render "subheader" %>
+<h2>Новое событие</h2>
+<table width="100%">
+<%= form_tag(:action => "event_write") do %>
+<%= hidden_field_tag 'id', @event["id"] %>
+    <tbody>
+        <tr>
+            <td align="right">Заголовок:</td>
+            <td align="left"><%= text_field_tag("title", @event["title"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <tr>
+            <td align="right">Объекты:</td>
+            <td align="left"><%= text_field_tag("objects", @event["objects"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <% if @event["new_objects"] %>
+            <tr>
+                <td align=right><font color=red>Внимание:</font></td>
+                <td>
+                    Будут добавлены новые объекты:&nbsp;<% for t in @event["new_objects"] %><% if t != @event["new_objects"][0] %>,<% end %>
+                        <font color="red"><%= t %></font><% end %>
+                </td>
+            </tr>
+        <% end %>
+        <tr>
+            <td align="right">Локация:</td>
+            <td align="left"><%= text_field_tag("location", @event["location"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <% if @event["new_location"] and @event["new_location"].length > 0 %>
+            <tr>
+                <td align=right><font color=red>Внимание:</font></td>
+                <td>
+                    Будет добавлена новая локация:&nbsp;<font color=red><%= @event["new_location"] %></font>
+                </td>
+            </tr>
+        <% end %>
+        <tr>
+            <td align="right">Важность:</td>
+            <td align="left">
+            <% if @event["importance"] %>
+            <%     importance = @event["importance"] %>
+            <% else %>
+            <%     importance = "1" %>
+            <% end %>
+            <% for i in 1..5 %>
+                <%= label_tag("importance_" + i.to_s(), i.to_s())  %><%=  radio_button_tag("importance", i.to_s(), importance == i.to_s()) %>
+            <% end %>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">Известно по игре:</td>
+            <td>
+                <%= check_box_tag("in_game", "1", @event["in_game"]) %>
+            </td>
+        </tr>
+        <tr valign="top">
+            <td align="right">Текст:</td>
+            <td>
+            <%= text_area_tag("description", @event["description"], :size => "114x10") %></td>
+        </tr>
+        <tr>
+            <td align="right">Источник:</td>
+            <td align="left"><%= text_field_tag("reporter", @event["reporter"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <% if @event["new_reporter"] and @event["new_reporter"].length > 0 %>
+            <tr>
+                <td align=right><font color=red>Внимание:</font></td>
+                <td>
+                    Будет добавлен новый источник информации:&nbsp;<font color=red><%= @event["new_reporter"] %></font>
+                </td>
+            </tr>
+        <% end %>
+        <tr>
+            <td align="right">Тэги:</td>
+            <td align="left"><%= text_field_tag("tags", @event["tags"], :size => "100%", :maxlength => 250) %></td>
+        </tr>
+        <% if @event["new_tags"] %>
+            <tr>
+                <td align=right><font color=red>Внимание:</font></td>
+                <td>
+                    Будут добавлены новые тэги:&nbsp;<% for t in @event["new_tags"] %><% if t != @event["new_tags"][0] %>,<% end %>
+                        <font color="red"><%= t %></font><% end %>
+                </td>
+            </tr>
+        <% end %>
+        <tr>
+            <td></td>
+            <td><%= submit_tag("Сохранить") %></td>
+        </tr>
+    </tbody>
+<% end %>
+</table>
+<% if @event["id"] and @event["id"].to_i > 0 %>
+    <%= link_to "Удалить событие", { :action => "event_delete", :id => @event["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить событие \"" + @event["title"] + "\"?');") %>
+<% end %>
+<script type='text/javascript'>
+    $(document).ready(function() {
+        var obj_suggests = [<%= raw @all_objects.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#objects").asuggest(obj_suggests);
+
+        var loc_suggests = [<%= raw @all_locations.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#location").asuggest(loc_suggests);
+
+        var rep_suggests = [<%= raw @all_reporters.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#reporter").asuggest(rep_suggests);
+
+        var tag_suggests = [<%= raw @all_tags.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        $("#reporter").asuggest(tag_suggests);
+    });
+</script>
