@@ -27,7 +27,7 @@ class AngbandDb < ActiveRecord::Base
     
     def self.checkLogin(login, passwd)
         rows = connection.select_all("select id, password from OPERATOR where id = #{sanitize(login)}")
-        if rows.size == 1
+        if rows.length == 1
             return passwd == rows[0]["password"]
         end
 
@@ -37,7 +37,7 @@ class AngbandDb < ActiveRecord::Base
     def self.getOperatorName(id)
         rows = connection.select_all("select name from OPERATOR where id = #{sanitize(id)}")
         ret = nil
-        if (rows.size == 1)
+        if (rows.length == 1)
             ret = rows[0]["name"]
         end
 
@@ -61,7 +61,7 @@ class AngbandDb < ActiveRecord::Base
         end
         rows = connection.select_all("select id, title, description, reporter_id, location_id, importance, in_game, creator, cr_date #{timezone_str} as cr_date, updater, up_date #{timezone_str} as up_date from EVENT where id = #{sanitize(id)}")
         ret = nil
-        if rows.size == 1
+        if rows.length == 1
             ret = rows[0]
         end
 
@@ -111,7 +111,7 @@ class AngbandDb < ActiveRecord::Base
 
     def self.getOperator(id)
         rows = connection.select_all("select id, name from operator where id = #{sanitize(id)}")
-        if rows.size == 1
+        if rows.length == 1
             rows[0]["roles"] = getOperatorRoles(id)
         end
         return rows[0]
@@ -491,10 +491,10 @@ class AngbandDb < ActiveRecord::Base
             row["tags"] = tags
 
             cr_date = row["cr_date"]
-            puts "=========================="
-            puts cr_date
-            puts cr_date.class.name
-            puts "=========================="
+            #puts "=========================="
+            #puts cr_date
+            #puts cr_date.class.name
+            #puts "=========================="
         end
 
         count_rows = connection.select_all(sql_count)
@@ -679,7 +679,7 @@ class AngbandDb < ActiveRecord::Base
         if period > 0
            sqlin = "e.cr_date >= now() - '#{sanitize(period)}h'::interval and "
         end
-        rows = connection.select_all("select count(e.id), l.id, l.name from location l left outer join event e on (#{sqlin} e.location_id = l.id and e.status = 'N') group by l.id order by l.id asc")
+        rows = connection.select_all("select count(e.id), l.id, l.name from location l left outer join event e on (#{sqlin} e.location_id = l.id)  group by l.id order by l.id asc")
         return rows
     end
 

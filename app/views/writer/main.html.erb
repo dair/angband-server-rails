@@ -44,11 +44,6 @@ limitations under the License.
                         <font color="red"><%= t %></font><% end %>
                 </td>
             </tr>
-        <% else %>
-            <tr>
-                <td>Правило:</td>
-                <td>Через пробел. Если объект содержит пробел, заменяйте на подчеркивание "_"</td>
-            </tr>
         <% end %>
         <tr>
             <td align="right">Локация:</td>
@@ -61,12 +56,26 @@ limitations under the License.
                     Будет добавлена новая локация:&nbsp;<font color=red><%= @event["new_location"] %></font>
                 </td>
             </tr>
-        <% else %>
-            <tr>
-                <td>Правило:</td>
-                <td>Несколько локаций &mdash; через пробел. Если локация содержит пробел, заменяйте на подчеркивание "_"</td>
-            </tr>
         <% end %>
+        <tr>
+            <td align="right">Важность:</td>
+            <td align="left">
+            <% if @event["importance"] %>
+            <%     importance = @event["importance"] %>
+            <% else %>
+            <%     importance = "1" %>
+            <% end %>
+            <% for i in 1..5 %>
+                <%= label_tag("importance_" + i.to_s(), i.to_s())  %><%=  radio_button_tag("importance", i.to_s(), importance == i.to_s()) %>
+            <% end %>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">Известно по игре:</td>
+            <td>
+                <%= check_box_tag("in_game", "1", @event["in_game"]) %>
+            </td>
+        </tr>
         <tr valign="top">
             <td align="right">Текст:</td>
             <td>
@@ -82,11 +91,6 @@ limitations under the License.
                 <td>
                     Будет добавлен новый источник информации:&nbsp;<font color=red><%= @event["new_reporter"] %></font>
                 </td>
-            </tr>
-        <% else %>
-            <tr>
-                <td>Правило:</td>
-                <td>Через пробел. Если источник содержит пробел, заменяйте на подчеркивание "_"</td>
             </tr>
         <% end %>
         <tr>

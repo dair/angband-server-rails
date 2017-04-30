@@ -36,20 +36,7 @@ limitations under the License.
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-<script>
-    function onApplicationLoad()
-    {
-        var current_time = new Date();
-        var elt = document.getElementById('timezone');
-        if (elt != null)
-        {
-            elt.value = current_time.getTimezoneOffset();
-        }
-    }
-
-</script>
-
-<body onload="onApplicationLoad()">
+<body>
     <table width="100%" border="0" style="margin: 0;">
         <tbody>
             <tr>

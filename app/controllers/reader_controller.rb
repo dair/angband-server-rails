@@ -23,6 +23,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'csv'
+
 class ReaderController < ApplicationController
     protect_from_forgery
 
@@ -39,7 +41,7 @@ class ReaderController < ApplicationController
             @params["from"] = 0
         end
         if not @params["qty"]
-            @params["qty"] = 1000
+            @params["qty"] = 10
         end
         
         filters = {}
