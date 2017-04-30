@@ -38,6 +38,7 @@ limitations under the License.
                     <% end %>
                 <% else %>
                     <%= form_tag(:controller => "application", :action => "login") do %>
+                        <input type="hidden" id="timezone" name="timezone">
                         <input name="name" id="name" /><br>
                         <input name="password" id="password" type="password" /><br>
                         <input type="submit" value="Войти" name="Login" />

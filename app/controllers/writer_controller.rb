@@ -151,6 +151,13 @@ class WriterController < ApplicationController
 
             if new_objs.empty? and new_location.length == 0 and new_reporter.length == 0 and new_tags.empty?
                 # weeeee, nothing new, just write and next
+
+                unless event.has_key?("importance")
+                    event["importance"] = 1
+                end
+                unless event.has_key?("in_game")
+                    event["in_game"] = false
+                end
                 ret = event_actual_write(event)
                 if ret
                     session["event_edit"] = nil
@@ -209,7 +216,7 @@ class WriterController < ApplicationController
             @params["from"] = 0
         end
         if not @params["qty"]
-            @params["qty"] = 100
+            @params["qty"] = 1000
         end
         
         filters = {}
@@ -226,6 +233,7 @@ class WriterController < ApplicationController
             loc = AngbandDb.getLocation(params["loc_id"])
             filters["locations"]["names"] = [loc["name"]]
         end
+
         (events, count) = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
 
         @params["filters"] = filters
@@ -478,6 +486,9 @@ class WriterController < ApplicationController
                 max_qty = c["count"].to_i
             end
         end
+        puts '==================='
+        puts max_qty
+        puts '==================='
         
         source = Rails.root.to_s + "/public/map.jpg"
         baseSource = source

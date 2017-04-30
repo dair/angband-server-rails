@@ -39,7 +39,7 @@ class ReaderController < ApplicationController
             @params["from"] = 0
         end
         if not @params["qty"]
-            @params["qty"] = 10
+            @params["qty"] = 1000
         end
         
         filters = {}
