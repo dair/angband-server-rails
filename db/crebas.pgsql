@@ -22,10 +22,10 @@
 -- limitations under the License.
 
 
-\connect template1
-drop database angband;
-create database angband;
-\connect angband;
+-- \connect template1
+-- drop database angband;
+-- create database angband;
+-- \connect angband;
 
 
 --  OPERATOR
