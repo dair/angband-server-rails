@@ -27,9 +27,9 @@ limitations under the License.
 <% if @location["id"] and @location["id"].to_i > 0 %>
     <%= link_to "Список событий по локации", { :action => "events", :loc_id => @location["id"] }, :class => "linkbutton" %>
 <% end %>
-<table width="100%">
 <%= form_tag(:action => "location_write") do %>
 <%= hidden_field_tag 'id', @location["id"] %>
+<table width="100%">
     <tbody>
         <% if @location["id"] and @location["id"].to_i > 0 %>
             <tr>
@@ -46,8 +46,8 @@ limitations under the License.
             <td><%= submit_tag("Сохранить") %></td>
         </tr>
     </tbody>
-<% end %>
 </table>
+<% end %>
 <% if @location["id"] and @location["id"].to_i > 0 %>
     <% if @location["events"] and @location["events"].to_i == 0 %>
         <%= link_to "Удалить локацию", { :action => "location_delete", :id => @location["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить локацию \"" + @location["name"] + "\"?');") %>

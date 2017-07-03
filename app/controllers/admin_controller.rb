@@ -105,5 +105,34 @@ class AdminController < ApplicationController
 
         redirect_to :action => "users"
     end
+
+    def joinrpg
+        if !checkCredentials()
+            return
+        end
+   
+        @subtitle = "Angband | Admin | Импорт из JoinRpg"
+    end
+
+    def joinrpg_character_import
+        if !checkCredentials()
+            return
+        end
+
+        url = params["import_url"]
+
+        event = {}
+        event[:url] = url
+        event[:user_id] = session[:user_id]
+
+        countBefore = AngbandDb.objectsCount()
+
+        ret = JoinrpgImportJob.new.perform(event)
+
+        countAfter = AngbandDb.objectsCount()
+
+        @objectsAdded = countAfter - countBefore
+        @subtitle = "Angband | Admin | Импорт из JoinRpg в процессе"
+    end
 end
 

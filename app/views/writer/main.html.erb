@@ -24,9 +24,9 @@ limitations under the License.
 -->
 <%= render "subheader" %>
 <h2>Новое событие</h2>
-<table width="100%">
 <%= form_tag(:action => "event_write") do %>
 <%= hidden_field_tag 'id', @event["id"] %>
+<table width="100%">
     <tbody>
         <tr>
             <td align="right">Заголовок:</td>
@@ -111,8 +111,8 @@ limitations under the License.
             <td><%= submit_tag("Сохранить") %></td>
         </tr>
     </tbody>
-<% end %>
 </table>
+<% end %>
 <% if @event["id"] and @event["id"].to_i > 0 %>
     <%= link_to "Удалить событие", { :action => "event_delete", :id => @event["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить событие \"" + @event["title"] + "\"?');") %>
 <% end %>

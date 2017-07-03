@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get "admin/users"
   get "admin/user_edit"
   post "admin/user_write"
+  get "admin/joinrpg"
+  post "admin/joinrpg_character_import"
 
   get "reader/main"
   
