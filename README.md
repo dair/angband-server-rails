@@ -24,3 +24,7 @@
 ## Образ системы с работающим сервером БИЦ
 
 Файл OVA для импорта в систему виртуализации VirtualBox (https://www.virtualbox.org) выложен на Яндекс.Диск: https://yadi.sk/d/SABV-nOC3KRF6z
+
+## Импорт персонажей из JoinRpg
+
+Теперь БИЦ умеет импортировать персонажей из JoinRpg (http://joinrpg.ru). Для этого администратор должен зайти на страницу _Импорт персонажей из JoinRpg_, ввести там ссылку на персонажей, выглядящую как `http://joinrpg.ru/ID/characters/activetoken?Token=HERECOMESTHETOKEN` и нажать кнопку _Импортировать_.
