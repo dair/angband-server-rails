@@ -118,13 +118,13 @@ limitations under the License.
 <% end %>
 <script type='text/javascript'>
     $(document).ready(function() {
-        var obj_suggests = [<%= raw @all_objects.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        var obj_suggests = [<%= raw @all_objects.collect{|x| '"' + escape_javascript(x) + '"'}.join(", ")  %>];
         $("#objects").asuggest(obj_suggests);
 
-        var loc_suggests = [<%= raw @all_locations.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        var loc_suggests = [<%= raw @all_locations.collect{|x| '"' + escape_javascript(x) + '"'}.join(", ")  %>];
         $("#location").asuggest(loc_suggests);
 
-        var rep_suggests = [<%= raw @all_reporters.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        var rep_suggests = [<%= raw @all_reporters.collect{|x| '"' + escape_javascript(x) + '"'}.join(", ")  %>];
         $("#reporter").asuggest(rep_suggests);
 
         var tag_suggests = [<%= raw @all_tags.collect{|x| '"' + x + '"'}.join(", ")  %>];
