@@ -24,9 +24,9 @@ limitations under the License.
 -->
 <%= render "subheader" %>
 <h2>Новое событие</h2>
-<table width="100%">
 <%= form_tag(:action => "event_write") do %>
 <%= hidden_field_tag 'id', @event["id"] %>
+<table width="100%">
     <tbody>
         <tr>
             <td align="right">Заголовок:</td>
@@ -111,20 +111,20 @@ limitations under the License.
             <td><%= submit_tag("Сохранить") %></td>
         </tr>
     </tbody>
-<% end %>
 </table>
+<% end %>
 <% if @event["id"] and @event["id"].to_i > 0 %>
     <%= link_to "Удалить событие", { :action => "event_delete", :id => @event["id"] }, :class => "linkbutton", :onclick => ("return confirm('В самом деле удалить событие \"" + @event["title"] + "\"?');") %>
 <% end %>
 <script type='text/javascript'>
     $(document).ready(function() {
-        var obj_suggests = [<%= raw @all_objects.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        var obj_suggests = [<%= raw @all_objects.collect{|x| '"' + escape_javascript(x) + '"'}.join(", ")  %>];
         $("#objects").asuggest(obj_suggests);
 
-        var loc_suggests = [<%= raw @all_locations.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        var loc_suggests = [<%= raw @all_locations.collect{|x| '"' + escape_javascript(x) + '"'}.join(", ")  %>];
         $("#location").asuggest(loc_suggests);
 
-        var rep_suggests = [<%= raw @all_reporters.collect{|x| '"' + x + '"'}.join(", ")  %>];
+        var rep_suggests = [<%= raw @all_reporters.collect{|x| '"' + escape_javascript(x) + '"'}.join(", ")  %>];
         $("#reporter").asuggest(rep_suggests);
 
         var tag_suggests = [<%= raw @all_tags.collect{|x| '"' + x + '"'}.join(", ")  %>];

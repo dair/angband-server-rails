@@ -343,11 +343,11 @@ class AngbandDb < ActiveRecord::Base
                 
                 # tags
                 puts "====== 5"
-		if not event["tags"].empty?
+                if not event["tags"].empty?
                     tags = getTagNamesAndIDs(event["tags"]) # hash names => ids
-		else
-		    tags = Hash.new
-		end
+                else
+                    tags = Hash.new
+                end
 
                 puts "====== 6"
                 tags.each do |key, value|
@@ -377,7 +377,7 @@ class AngbandDb < ActiveRecord::Base
                     puts "====== 7.2"
                     event_id = connection.insert("insert into event (title, description, reporter_id, location_id, importance, in_game, creator, updater)
                         values (#{sanitize(event["title"])}, #{sanitize(event["description"])}, #{sanitize(rep[event["reporter"]])},
-                                #{sanitize(loc[event["location"]])}, #{sanitize(event["importance"])}, #{sanitize(event["in_game"])}, #{sanitize(operator_id)}, #{sanitize(operator_id)}) returning id")
+                                #{sanitize(loc[event["location"]])}, #{sanitize(event["importance"])}, #{sanitize(event["in_game"])}, #{sanitize(operator_id)}, #{sanitize(operator_id)})")
                     event_id = event_id.to_i
 
                 end
@@ -400,8 +400,6 @@ class AngbandDb < ActiveRecord::Base
                     connection.insert("insert into event_tag (event_id, tag_id) values (#{event_id}, #{value})")
                 end
                 puts "====== 10"
-            rescue 
-
             rescue Exception => e
                 puts "EXCEPTION===================================="
                 puts e
@@ -652,17 +650,17 @@ class AngbandDb < ActiveRecord::Base
     end
 
     def self.getObjectParent(id)
-    	rows = connection.select_all("select o.name, o.id from object o, object_ref r where o.status = 'N' and o.id = r.parent_id and r.child_id = #{sanitize(id)}")
+        rows = connection.select_all("select o.name, o.id from object o, object_ref r where o.status = 'N' and o.id = r.parent_id and r.child_id = #{sanitize(id)}")
         return rows
     end
 
     def self.setObjectChildren(id, children)
-    	transaction do
+        transaction do
             connection.delete("delete from object_ref where parent_id = #{sanitize(id)}");
             for c in children
                 connection.insert("insert into object_ref (parent_id, child_id) values (#{sanitize(id)}, #{sanitize(c)})")
             end
-	    end
+        end
     end
 
     def self.searchEventBySubstring(substring)
@@ -697,6 +695,15 @@ class AngbandDb < ActiveRecord::Base
             connection.update("update counter set count = count + 1 where url = #{sanitize(url)}")
         end
 
+        return count
+    end
+
+    def self.objectsCount()
+        rows = connection.select_all("select count(*) as count from object")
+        count = 0
+        if not rows.empty?
+            count = rows[0]["count"].to_i
+        end
         return count
     end
 end
