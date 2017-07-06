@@ -54,12 +54,8 @@ class AngbandDb < ActiveRecord::Base
         return ret
     end
 
-    def self.getEvent(id, timezone)
-        timezone_str = ""
-        if timezone
-            timezone_str = "at time zone #{sanitize(timezone)}"
-        end
-        rows = connection.select_all("select id, title, description, reporter_id, location_id, importance, in_game, creator, cr_date #{timezone_str} as cr_date, updater, up_date #{timezone_str} as up_date from EVENT where id = #{sanitize(id)}")
+    def self.getEvent(id)
+        rows = connection.select_all("select id, title, description, reporter_id, location_id, importance, in_game, creator, extract(epoch from cr_date) as cr_date, updater, extract(epoch from up_date) as up_date from EVENT where id = #{sanitize(id)}")
         ret = nil
         if rows.length == 1
             ret = rows[0]
@@ -418,7 +414,7 @@ class AngbandDb < ActiveRecord::Base
         connection.update("update event set status = 'D' where id = #{sanitize(id)}")
     end
 
-    def self.getEventList(from, qty, timezone, filters)
+    def self.getEventList(from, qty, filters)
         need_filter = false
         sql_parts = []
         if filters["objects"] and not filters["objects"].empty?
@@ -445,13 +441,8 @@ class AngbandDb < ActiveRecord::Base
             need_filter = true
         end
 
-        timezone_str = ""
-        if timezone
-            timezone_str = "at time zone #{sanitize(timezone)}"
-        end
-
         sql_count = "select count(*)"
-        sql = "select e.id, e.title, char_length(e.description) as descr_len, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, e.cr_date #{timezone_str} as cr_date, e.updater, up.name as up_name, e.up_date #{timezone_str} as up_date"
+        sql = "select e.id, e.title, char_length(e.description) as descr_len, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, extract(epoch from e.cr_date) as cr_date, e.updater, up.name as up_name, extract(epoch from e.up_date) as up_date"
         
         sql_from = " from event e, location l, reporter r, operator cr, operator up where
                                       e.status = 'N' and
@@ -501,13 +492,9 @@ class AngbandDb < ActiveRecord::Base
         return [rows, count]
     end
 
-    def self.getObjectList(from, qty, timezone)
-        timezone_str = ""
-        if timezone
-            timezone_str = "at time zone #{sanitize(timezone)}"
-        end
+    def self.getObjectList(from, qty)
         sql_count = "select count(*) "
-        sql = "select o.id, o.name, o.description, o.creator, cr.name as cr_name, o.cr_date #{timezone_str} as cr_date, o.updater, up.name as up_name, o.up_date #{timezone_str} as up_date "
+        sql = "select o.id, o.name, o.description, o.creator, cr.name as cr_name, extract(epoch from o.cr_date) as cr_date, o.updater, up.name as up_name, extract(epoch from o.up_date) as up_date "
         sql_from = "from object o, operator cr, operator up where
                                       o.status = 'N' and
                                       o.creator = cr.id and
@@ -531,7 +518,7 @@ class AngbandDb < ActiveRecord::Base
         return [rows, count]
     end
 
-    def self.getObject(id, timezone)
+    def self.getObject(id)
         rows = connection.select_all("select id, name, description from object where id = #{sanitize(id)}")
         if rows.empty?
             return Hash.new

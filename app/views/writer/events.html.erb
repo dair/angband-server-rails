@@ -47,7 +47,6 @@ limitations under the License.
             <th>Локация</th>
             <th>Объекты</th>
             <th>Кто сообщил</th>
-            <th>Известно по игре?</th>
             <th>История</th>
             <th>Тэги</th>
         </tr>
@@ -64,11 +63,10 @@ limitations under the License.
                 <td><%= link_to row["location_name"], { :action => "location", :id => row["location_id"] }  %></td>
                 <td><%= raw row["objects"].map { |x| link_to(x["name"], { :action => "object", :id => x["id"] }) }.join(", ") %></td>
                 <td><%= row["reporter_name"] %></td>
-                <td><%= row["in_game"] == "t" ? "Да" : "Нет" %></td>
-                <td><font size=-2><%= row["cr_name"] %>,&nbsp;<%= row["cr_date"][0, 19].sub(" ", " ") %><br>
-                    <% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
+                <td><span style="white-space:nowrap;"><font size=-2><%= row["cr_name"] %>,&nbsp;<span class="timestamp"><%= row["cr_date"] %></span></span><br>
+                    <span style="white-space:nowrap;"><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
                         <font color=<%= color %>>
-                        <%= row["up_name"] %>,&nbsp;<%= row["up_date"][0,19].sub(" ", " ") %></font>
+                        <%= row["up_name"] %>,&nbsp;<span class="timestamp"><%= row["up_date"] %></span></font></span>
                 </td>
                 <td><%= row["tags"].map { |x| x["name"] }.join(", ") %></td>
             </tr>

@@ -48,7 +48,7 @@ class ReaderController < ApplicationController
         if params["obj_id"]
             filters["objects"] = {}
             filters["objects"]["ids"] = [params["obj_id"]]
-            obj = AngbandDb.getObject(params["obj_id"], session["timezone"])
+            obj = AngbandDb.getObject(params["obj_id"])
             filters["objects"]["names"] = [obj["name"]]
         end
         
@@ -58,7 +58,7 @@ class ReaderController < ApplicationController
             loc = AngbandDb.getLocation(params["loc_id"])
             filters["locations"]["names"] = [loc["name"]]
         end
-        (events, count) = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), session[:timezone], filters)
+        (events, count) = AngbandDb.getEventList(id0(@params["from"]), id0(@params["qty"]), filters)
 
         @params["filters"] = filters
         @params["events"] = events
@@ -72,7 +72,7 @@ class ReaderController < ApplicationController
             return
         end
 
-        @event = AngbandDb.getEvent(id, session["timezone"])
+        @event = AngbandDb.getEvent(id)
     end
 
     def objects
@@ -88,7 +88,7 @@ class ReaderController < ApplicationController
             @params["qty"] = 100
         end
        
-        (objects, count) = AngbandDb.getObjectList(id0(@params["from"]), id0(@params["qty"]), session[:timezone])
+        (objects, count) = AngbandDb.getObjectList(id0(@params["from"]), id0(@params["qty"]))
         for obj in objects
             if obj["description"] and obj["description"].length > 50
                 obj["description"] = obj["description"][0, 50] + "..."
@@ -106,7 +106,7 @@ class ReaderController < ApplicationController
             return
         end
         
-        object = AngbandDb.getObject(id, session["timezone"])
+        object = AngbandDb.getObject(id)
         object["parent"] = AngbandDb.getObjectParent(id)
         
         
