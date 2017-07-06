@@ -95,9 +95,9 @@ limitations under the License.
                 <td align="center"><%= row["importance"] %></td>
                 <td><%= row["in_game"] == "t" ? "Да" : "Нет" %></td>
                 <td>
-                    <font size=-2><%= row["cr_name"] %>, <%= row["cr_date"][0, 19] %><br>
+                    <font size=-2><%= row["cr_name"] %>, <%= row["cr_date"] %><br>
                     <% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
-                    <font color=<%= color %>> <%= row["up_name"] %>, <%= row["up_date"][0,19] %></font>
+                    <font color=<%= color %>> <%= row["up_name"] %>, <%= row["up_date"] %></font>
                 </td>
                 <td><%= row["tags"].map { |x| x["name"] }.join(", ") %></td>
 
