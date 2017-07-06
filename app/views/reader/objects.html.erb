@@ -46,10 +46,7 @@ limitations under the License.
         <tr>
             <th>Название</th>
             <th>Описание (не&nbsp;полностью)</th>
-            <th>Создатель объекта</th>
-            <th>Дата создания объекта</th>
-            <th>Последний редакти-<br>ровавший</th>
-            <th>Дата последнего редакти-<br>рования</th>
+            <th>История</th>
         </tr>
         <% for row in @params["objects"] %>
             <tr>
@@ -61,21 +58,13 @@ limitations under the License.
                     <% end %>
                     <%= link_to row["name"], { :action => "object", :controller => ctrl, :id => row["id"] } %>
                 </td>
-                <td><%= simple_format(row["description"]) %></td>
-                <td><%= row["cr_name"] %></td>
-                <td><%= row["cr_date"] %></td>
-                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
-                        <font color=<%= color %>>
-                        <%= row["up_name"] %>
-                        </font>
-                </td>
-                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
-                    <font color=<%= color %>>
-                        <%= row["up_date"] %>
-                    </font>
+                <td><%= row["description"] %></td>
+                <td><font size=-2><%= row["cr_name"] %>,&nbsp;<span class="timestamp"><%= row["cr_date"] %></span><br>
+                    <% color = (row["cr_date"] == row["up_date"])? "green": "red" %><font color=<%= color %>><%= row["up_name"] %>,&nbsp;<span class="timestamp"><%= row["up_date"] %></span></font></font>
                 </td>
             </tr>
         <% end %>
     </tbody>
 </table>
+
 

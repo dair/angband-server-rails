@@ -280,6 +280,8 @@ class WriterController < ApplicationController
 
         @params["objects"] = objects
         @params["count"] = count
+
+        render "reader/objects"
     end
 
     def object
