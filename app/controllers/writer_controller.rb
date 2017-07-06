@@ -232,6 +232,8 @@ class WriterController < ApplicationController
         @params["filters"] = filters
         @params["events"] = events
         @params["count"] = count
+
+        render "reader/events"
     end
 
     def event
@@ -447,7 +449,7 @@ class WriterController < ApplicationController
         @params["events"] = events
         @params["count"] = count
 
-        render "events"
+        render "reader/events"
     end
 
     def map_image
