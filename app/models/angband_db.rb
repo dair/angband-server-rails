@@ -468,7 +468,7 @@ class AngbandDb < ActiveRecord::Base
         sql += sql_from
         sql_count += sql_from
 
-        sql += " order by e.id asc "
+        sql += " order by cr_date desc "
         if qty > 0
             sql = sql + " limit #{sanitize(qty)} "
         end

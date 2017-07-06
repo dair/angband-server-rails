@@ -72,10 +72,7 @@ limitations under the License.
             <th>Кто сообщил</th>
             <th>Важность</th>
             <th>Известно по игре?</th>
-            <th>Создатель события</th>
-            <th>Дата создания события</th>
-            <th>Последний редакти-ровавший</th>
-            <th>Дата последнего редакти-рования</th>
+            <th>История</th>
             <th>Тэги</th>
         </tr>
         <% for row in @params["events"] %>
@@ -97,17 +94,10 @@ limitations under the License.
                 <td><%= row["reporter_name"] %></td>
                 <td align="center"><%= row["importance"] %></td>
                 <td><%= row["in_game"] == "t" ? "Да" : "Нет" %></td>
-                <td><%= row["cr_name"] %></td>
-                <td><%= row["cr_date"][0, 19] %></td>
-                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
-                        <font color=<%= color %>>
-                        <%= row["up_name"] %>
-                        </font>
-                </td>
-                <td><% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
-                    <font color=<%= color %>>
-                        <%= row["up_date"][0,19] %>
-                    </font>
+                <td>
+                    <font size=-2><%= row["cr_name"] %>, <%= row["cr_date"][0, 19] %><br>
+                    <% color = (row["cr_date"] == row["up_date"])? "green": "red" %>
+                    <font color=<%= color %>> <%= row["up_name"] %>, <%= row["up_date"][0,19] %></font>
                 </td>
                 <td><%= row["tags"].map { |x| x["name"] }.join(", ") %></td>
 

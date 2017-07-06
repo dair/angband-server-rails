@@ -22,6 +22,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+<script>
+    function onSubmit()
+    {
+        var current_time = new Date();
+        document.getElementById('timezone').value = current_time.getTimezoneOffset();
+    }
+
+</script>
 <table width="100%">
     <tbody>
         <tr>
@@ -37,7 +45,8 @@ limitations under the License.
                         <%= @username %>&nbsp;<input type="submit" value="Выйти" name="Logout" />
                     <% end %>
                 <% else %>
-                    <%= form_tag(:controller => "application", :action => "login") do %>
+                    <%= form_tag({:controller => "application", :action => "login"}, {:onsubmit => "onSubmit();"}) do %>
+                        <input type="hidden" id="timezone" name="timezone">
                         <input name="name" id="name" /><br>
                         <input name="password" id="password" type="password" /><br>
                         <input type="submit" value="Войти" name="Login" />
