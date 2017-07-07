@@ -58,10 +58,10 @@ limitations under the License.
 <% if @object["id"] and @object["id"].to_i > 0 %>
     <%= link_to "Список событий по объекту", { :action => "events", :obj_id => @object["id"] }, :class => "linkbutton" %>
 <% end %>
-<table width="100%">
 <%= form_tag({:action => "object_write"}, {:onsubmit => "onSubmit();"}) do %>
 <%= hidden_field_tag 'id', @object["id"] %>
 <%= hidden_field_tag 'children_list', @object["children"].map {|c| c["id"] } %>
+<table width="100%">
     <tbody>
         <tr>
             <td align="right">Название:</td>
@@ -118,8 +118,8 @@ limitations under the License.
             <td><%= submit_tag("Сохранить") %></td>
         </tr>
     </tbody>
-<% end %>
 </table>
+<% end %>
 
 
 <% if @object["id"] and @object["id"].to_i > 0 %>

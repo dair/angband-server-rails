@@ -22,5 +22,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<%= link_to "Пользователи", { :action => "users" }, :class => "linkbutton" %>
-<%= link_to "Импорт из JoinRpg", { :action => "joinrpg" }, :class => "linkbutton" %>
+<h2>Импорт пользователей</h2>
+<%= form_tag(:action => "joinrpg_character_import") do %>
+	Сюда надо скопировать строчку из JoinRpg вида http://joinrpg.ru/XXX/characters/activetoken?Token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	<%= text_field_tag("import_url", "", :size => "100%", :maxlength => 2048) %>
+        <%= submit_tag("Импортировать") %>
+<% end %>

@@ -66,9 +66,10 @@ class WriterController < ApplicationController
     end
 
     def event_params(params)
-        ret = params.clone
-        ret.each { |k, v| ret[k] = v.strip }
+        ret = {}#params.to_h
 
+        params.each { |k, v| if k != "authenticity_token" then ret[k] = v.strip end }
+        
         if ret["title"].length == 0
             is_error = true
             addError("Заголовок пустым быть не может")
@@ -112,7 +113,7 @@ class WriterController < ApplicationController
         if not checkCredentials
             return
         end
-
+        
         event_pair = event_params(params)
 
         if event_pair[:error]
