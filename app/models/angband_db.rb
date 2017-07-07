@@ -295,27 +295,27 @@ class AngbandDb < ActiveRecord::Base
         transaction do
             begin
                 # objects
-                puts "====== 1"
+                #puts "====== 1"
                 objs = getObjectNamesAndIDs(event["objects"]) # hash names => ids
 
-                puts "====== 2"
+                #puts "====== 2"
                 objs.each do |key, value|
                     if value == 0
                         rows = connection.select_all("insert into object (name, status, creator, updater) values(#{sanitize(key)}, 'N', #{sanitize(operator_id)}, #{sanitize(operator_id)}) returning id")
-                        puts "====== 2.1"
-                        puts rows
+                        #puts "====== 2.1"
+                        #puts rows
                         if not rows or rows.empty? or rows[0]["id"].to_i <= 0
                             err = "Inserting object returned invalid id"
                             puts "EEEEERROR: " + err
                             raise err
                         end
                         id = rows[0]["id"].to_i
-                        puts "====== 2.2"
+                        #puts "====== 2.2"
                         objs[key] = id
                     end
                 end
 
-                puts "====== 3"
+                #puts "====== 3"
                 # location
                 loc = getLocationNameAndID(event["location"])
                 if loc[event["location"]] == 0
@@ -326,7 +326,7 @@ class AngbandDb < ActiveRecord::Base
                     loc[event["location"]] = id.to_i
                 end
 
-                puts "====== 4"
+                #puts "====== 4"
                 #reporter
                 rep = getReporterNameAndID(event["reporter"])
                 if rep[event["reporter"]] == 0
@@ -338,14 +338,14 @@ class AngbandDb < ActiveRecord::Base
                 end
                 
                 # tags
-                puts "====== 5"
+                #puts "====== 5"
                 if not event["tags"].empty?
                     tags = getTagNamesAndIDs(event["tags"]) # hash names => ids
                 else
                     tags = Hash.new
                 end
 
-                puts "====== 6"
+                #puts "====== 6"
                 tags.each do |key, value|
                     if value == 0
                         id = connection.insert("insert into tag (name, status) values(#{sanitize(key)}, 'N')")
@@ -363,14 +363,14 @@ class AngbandDb < ActiveRecord::Base
                 end
                 
                 if event["id"] and event["id"] > 0
-                    puts "====== 7.1"
+                    #puts "====== 7.1"
                     event_id = event["id"]
                     connection.update("update event set title = #{sanitize(event["title"])}, description = #{sanitize(event["description"])},
                                         reporter_id = #{sanitize(rep[event["reporter"]])}, location_id = #{sanitize(loc[event["location"]])},
                                         importance = #{sanitize(event["importance"])}, in_game = #{sanitize(event["in_game"])}, updater = #{sanitize(operator_id)},
                                         up_date = now() where id = #{sanitize(event_id)}")
                 else
-                    puts "====== 7.2"
+                    #puts "====== 7.2"
                     event_id = connection.insert("insert into event (title, description, reporter_id, location_id, importance, in_game, creator, updater)
                         values (#{sanitize(event["title"])}, #{sanitize(event["description"])}, #{sanitize(rep[event["reporter"]])},
                                 #{sanitize(loc[event["location"]])}, #{sanitize(event["importance"])}, #{sanitize(event["in_game"])}, #{sanitize(operator_id)}, #{sanitize(operator_id)})")
@@ -382,20 +382,20 @@ class AngbandDb < ActiveRecord::Base
                     raise "Inserting event returned invalid id"
                 end
                     
-                puts "====== 8"
+                #puts "====== 8"
 
                 connection.delete("delete from event_object where event_id = #{event_id}")
                 objs.each do |key, value|
                     connection.insert("insert into event_object (event_id, object_id) values (#{event_id}, #{value})")
                 end
 
-                puts "====== 9"
+                #puts "====== 9"
                 # event_tag
                 connection.delete("delete from event_tag where event_id = #{event_id}")
                 tags.each do |key, value|
                     connection.insert("insert into event_tag (event_id, tag_id) values (#{event_id}, #{value})")
                 end
-                puts "====== 10"
+                #puts "====== 10"
             rescue Exception => e
                 puts "EXCEPTION===================================="
                 puts e
