@@ -102,12 +102,6 @@ class ApplicationController < ActionController::Base
     session[:username] = AngbandDb.getOperatorName(id)
     session[:userroles] = roles
 
-    timezone = params["timezone"].to_i
-    hours = timezone / 60
-    minutes = timezone % 60
-    timezone = "%d:%02d" % [hours, minutes]
-    session[:timezone] = timezone
-
     redirect_to :action => "main"
   end
 
