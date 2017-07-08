@@ -442,7 +442,7 @@ class AngbandDb < ActiveRecord::Base
         end
 
         sql_count = "select count(*)"
-        sql = "select e.id, e.title, char_length(e.description) as descr_len, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, extract(epoch from e.cr_date) as cr_date, e.updater, up.name as up_name, extract(epoch from e.up_date) as up_date"
+        sql = "select e.id, e.title, e.description, char_length(e.description) as descr_len, e.location_id, l.name as location_name, e.reporter_id, r.name as reporter_name, e.importance, e.in_game, e.creator, cr.name as cr_name, extract(epoch from e.cr_date) as cr_date, e.updater, up.name as up_name, extract(epoch from e.up_date) as up_date"
         
         sql_from = " from event e, location l, reporter r, operator cr, operator up where
                                       e.status = 'N' and
