@@ -23,10 +23,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-    <div class="panel-group">
+    <div class="panel-group" id="accordion">
         <% for row in @params["events"] %>
             <div class="panel panel-default">
-                <a data-toggle="collapse" href="#collapse<%= row["id"] %>">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= row["id"] %>">
                     <div class="panel-heading">
                         <%= row["title"] %>
                     </div>

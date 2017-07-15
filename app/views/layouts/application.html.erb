@@ -25,6 +25,7 @@ limitations under the License.
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
+  <!-- DESKTOP -->
   <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
   <META HTTP-EQUIV="EXPIRES" CONTENT="0">
   <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
@@ -33,7 +34,9 @@ limitations under the License.
 <% end %>
   <title><%= @title %></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= stylesheet_link_tag    "application-desktop", :media => "all" %>
   <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "application-desktop" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
