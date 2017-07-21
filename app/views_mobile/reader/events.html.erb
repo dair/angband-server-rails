@@ -22,22 +22,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-
     <div class="panel-group" id="accordion">
         <% for row in @params["events"] %>
             <div class="panel panel-default">
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= row["id"] %>">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+                            <div class="col-xs-10 col-sm-6 col-md-6 col-lg-8">
                                 <%= row["title"] %>
                             </div>
-                            <div class="hidden-xs col-sm-3 col-md-3 col-lg-2">
-                                <font size=-2><%= row["location_name"] %><br>
-                                <%= raw row["objects"].map { |x| link_to(x["name"], { :action => "object", :id => x["id"] }) }.join(", ") %></font>
+                            <div class="hidden-xs col-sm-2 col-md-3 col-lg-2">
+                                <small><%= row["location_name"] %><br>
+                                <%= raw row["objects"].map { |x| x["name"] }.join(", ") %></small>
                             </div>
-                            <div class="hidden-xs col-sm-3 col-md-3 col-lg-2">
-                                <font size=-2>
+                            <div class="hidden-xs col-sm-4 col-md-3 col-lg-2">
+                                <small>
                                     <span style="white-space:nowrap;">
                                         <%= row["cr_name"] %>,&nbsp;<span class="timestamp"><%= row["cr_date"] %></span>
                                     </span><br>
@@ -47,7 +46,10 @@ limitations under the License.
                                             <%= row["up_name"] %>,&nbsp;<span class="timestamp"><%= row["up_date"] %></span>
                                         </font>
                                     </span>
-                                </font>
+                                </small>
+                            </div>
+                            <div class="col-xs-2 hidden-sm hidden-md hidden-lg text-right">
+                                <span style="white-space:nowrap;"><small><span class="timestamp"><%= row["cr_date"] %></span></small></span>
                             </div>
                         </div>
                     </div>
@@ -57,10 +59,12 @@ limitations under the License.
                         <% if row["descr_len"].to_i > 0 %>
                             <li class="list-group-item"><%= row["description"] %></li>
                         <% end %>
-                        <li class="list-group-item hidden-sm hidden-md hidden-lg"><font size=-2>Локация: <%= row["location_name"] %></font></li>
-                        <li class="list-group-item hidden-sm hidden-md hidden-lg"><font size=-2>Объекты: <%= raw row["objects"].map { |x| link_to(x["name"], { :action => "object", :id => x["id"] }) }.join(", ") %></font></li>
                         <li class="list-group-item hidden-sm hidden-md hidden-lg">
-                            <font size=-2>
+                            <small>Локация: <%= row["location_name"] %></small>
+                        </li>
+                        <li class="list-group-item hidden-sm hidden-md hidden-lg"><small>Объекты: <%= raw row["objects"].map { |x| x["name"] }.join(", ") %></small></li>
+                        <li class="list-group-item hidden-sm hidden-md hidden-lg">
+                            <small>
                                 <span style="white-space:nowrap;">
                                     <%= row["cr_name"] %>,&nbsp;<span class="timestamp"><%= row["cr_date"] %></span>
                                 </span><br>
@@ -70,7 +74,7 @@ limitations under the License.
                                         <%= row["up_name"] %>,&nbsp;<span class="timestamp"><%= row["up_date"] %></span>
                                     </font>
                                 </span>
-                            </font>
+                            </small>
                         </li>
                     </ul>
                 </div>
