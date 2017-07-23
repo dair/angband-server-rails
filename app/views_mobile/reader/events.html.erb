@@ -35,7 +35,7 @@ limitations under the License.
                                 <small><%= row["location_name"] %><br>
                                 <%= raw row["objects"].map { |x| x["name"] }.join(", ") %></small>
                             </div>
-                            <div class="hidden-xs col-sm-4 col-md-3 col-lg-2">
+                            <div class="hidden-xs col-sm-4 col-md-3 col-lg-2 text-right">
                                 <small>
                                     <span style="white-space:nowrap;">
                                         <%= row["cr_name"] %>,&nbsp;<span class="timestamp"><%= row["cr_date"] %></span>

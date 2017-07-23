@@ -63,6 +63,8 @@ class ReaderController < ApplicationController
         @params["filters"] = filters
         @params["events"] = events
         @params["count"] = count
+
+        @subtitle = "События"
     end
 
     def event
@@ -97,6 +99,8 @@ class ReaderController < ApplicationController
 
         @params["objects"] = objects
         @params["count"] = count
+
+        @subtitle = "Объекты"
     end
 
     def object
@@ -121,6 +125,7 @@ class ReaderController < ApplicationController
         locations = AngbandDb.getLocationList()
         @params = Hash.new
         @params["locations"] = locations
+        @subtitle = "Локации"
     end
 
     def location
